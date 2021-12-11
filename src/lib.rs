@@ -4,16 +4,45 @@ extern crate diesel;
 extern crate serde_json;
 
 use actix_web::{middleware, App, HttpServer};
-use diesel::pg::{self, ConnectionManager};
+use diesel::pg::{self, PgConnection};
 use diesel::prelude::*;
+use dotenv::dotenv;
+use std::env;
 
 mod errors;
 mod models;
 mod routes;
 mod schema;
 
-type Pool = pg::Pool<ConnectionManager<PgConnection>>;
+type Pool = pg::Pool<PgConnection>;
 
 pub struct Blog {
     port: u16,
+}
+
+impl Blog {
+    pub fn new(port: u16) -> Self {
+        Blog { port }
+    }
+
+    pub fn establish_connection() -> PgConnection {
+        dotenv().ok();
+
+        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+    }
+
+    pub async fn run(&self) -> std::io::Result<()> {
+        // let manager = ConnectionManager::<>
+
+        println!("Starting http server: 127.0.0.1:{}", self.port);
+        HttpServer::new(move || {
+            App::new()
+                .wrap(middleware::Logger::default())
+                .configure(routes::users::configure)
+        })
+        .bind(("127.0.0.1", self.port))?
+        .run()
+        .await
+    }
 }
