@@ -3,7 +3,7 @@ extern crate actix_web;
 
 use actix_web::{
     error::{Error, InternalError, JsonPayloadError},
-    middleware, web, App, HttpRequest, HttpServer, Result,
+    middleware, web, App, HttpRequest, HttpResponse, HttpServer, Result,
 };
 use serde::{Deserialize, Serialize};
 use std::cell::Cell;
@@ -85,6 +85,18 @@ async fn clear(state: web::Data<AppState>) -> Result<web::Json<IndexResponse>> {
         request_count,
         messages: vec![],
     }))
+}
+
+async fn post_error(err: JsonPayloadError, req: &HttpRequest) -> Error {
+    let state = req.app_data::<AppState>().unwrap();
+    let request_count = state.request_count.get() + 1;
+    state.request_count.set(request_count);
+    let post_error = PostError {
+        server_id: state.server_id,
+        request_count,
+        error: format!("{}", err),
+    };
+    InternalError::from_response(err, HttpResponse::BadRequest().json(post_error)).into()
 }
 
 pub struct MessageApp {
