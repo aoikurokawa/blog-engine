@@ -10,6 +10,7 @@ use std::cell::Cell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
+const LOG_FORMAT: &str = r#""%r" %s %b "%{User-Agent}i" %D"#;
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 struct AppState {
@@ -87,7 +88,7 @@ async fn clear(state: web::Data<AppState>) -> Result<web::Json<IndexResponse>> {
     }))
 }
 
-async fn post_error(err: JsonPayloadError, req: &HttpRequest) -> Error {
+fn post_error(err: JsonPayloadError, req: &HttpRequest) -> Error {
     let state = req.app_data::<AppState>().unwrap();
     let request_count = state.request_count.get() + 1;
     state.request_count.set(request_count);
@@ -118,11 +119,15 @@ impl MessageApp {
                     request_count: Cell::new(0),
                     messages: messages.clone(),
                 })
-                .wrap(middleware::Logger::default())
+                .wrap(middleware::Logger::new(LOG_FORMAT))
                 .service(index)
                 .service(
                     web::resource("/send")
-                        .data(web::JsonConfig::default().limit(4096))
+                        .data(
+                            web::JsonConfig::default()
+                                .limit(4096)
+                                .error_handler(post_error),
+                        )
                         .route(web::post().to(post)),
                 )
                 .service(clear)
