@@ -2,7 +2,7 @@
 extern crate actix_web;
 
 use actix_web::{middleware, web, App, HttpRequest, HttpServer, Result};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::cell::Cell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
@@ -45,9 +45,15 @@ impl MessageApp {
     }
 
     pub async fn run(&self) -> std::io::Result<()> {
+        let messages = Arc::new(Mutex::new(vec![]));
         println!("Starting http server: 127.0.0.1:{}", self.port);
         HttpServer::new(move || {
             App::new()
+                .data(AppState {
+                    server_id: SERVER_COUNTER.fetch_add(1, Ordering::SeqCst),
+                    request_count: Cell::new(0),
+                    messages: messages.clone(),
+                })
                 .wrap(middleware::Logger::default())
                 .service(index)
         })
