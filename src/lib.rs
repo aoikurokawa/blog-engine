@@ -23,15 +23,15 @@ struct IndexResponse {
 }
 
 #[get("/")]
-async fn index(req: HttpRequest) -> Result<web::Json<IndexResponse>> {
-    let hello = req
-        .headers()
-        .get("hello")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or_else(|| "world");
+async fn index(state: web::Data<AppState>) -> Result<web::Json<IndexResponse>> {
+    let request_count = state.request_count.get() + 1;
+    state.request_count.set(request_count);
+    let ms = state.messages.lock().unwrap();
 
     Ok(web::Json(IndexResponse {
-        message: hello.to_owned(),
+        server_id: state.server_id,
+        request_count,
+        messages: ms.clone(),
     }))
 }
 
