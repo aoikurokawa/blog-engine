@@ -53,7 +53,7 @@ async fn post(
 ) -> Result<web::Json<PostResponse>> {
     let request_count = state.request_count.get() + 1;
     state.request_count.set(request_count);
-    let mut ms = state.messge.lock().unwrap();
+    let mut ms = state.messages.lock().unwrap();
     ms.push(msg.message.clone());
 
     Ok(web::Json(PostResponse {
@@ -64,7 +64,7 @@ async fn post(
 }
 
 #[post("/clear")]
-fn clear(state: web::Data<AppState>) -> Result<web::Json<IndexResponse>> {
+async fn clear(state: web::Data<AppState>) -> Result<web::Json<IndexResponse>> {
     let request_count = state.request_count.get() + 1;
     state.request_count.set(request_count);
     let mut ms = state.messages.lock().unwrap();
