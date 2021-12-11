@@ -4,5 +4,16 @@ extern crate diesel;
 extern crate serde_json;
 
 use actix_web::{middleware, App, HttpServer};
+use diesel::pg::{self, ConnectionManager};
 use diesel::prelude::*;
-use diesel::r2d2::{self, ConnectionManager};
+
+mod errors;
+mod models;
+mod routes;
+mod schema;
+
+type Pool = pg::Pool<ConnectionManager<PgConnection>>;
+
+pub struct Blog {
+    port: u16,
+}
