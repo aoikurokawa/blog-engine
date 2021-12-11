@@ -7,6 +7,14 @@ use std::cell::Cell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
+static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
+
+struct AppState {
+    server_id: usize,
+    request_count: Cell<usize>,
+    messages: Arc<Mutex<Vec<String>>>,
+}
+
 #[derive(Serialize)]
 struct IndexResponse {
     message: String,
