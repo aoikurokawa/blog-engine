@@ -2,6 +2,7 @@ use actix_web::error::BlockingError;
 use actix_web::web::HttpResponse;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::{DatabaseError, NotFound};
+use serde::Serialize;
 use std::fmt;
 
 #[derive(Debug)]
@@ -39,4 +40,26 @@ impl From<BlockingError<AppError>> for AppError {
             BlockingError::Canceled => AppError::OperationCanceled,
         }
     }
+}
+
+#[derive(Debug, Serialize)]
+struct ErrorResponse {
+    err: String,
+}
+
+impl actix_web::ResponseError for AppError {
+    fn error_response(&self) -> HttpResponse {
+        let err = format!("{}", self);
+        let mut builder = match self {
+            AppError::RecordAlreadyExists => HttpResponse::BadRequest(),
+            AppError::RecordNotFound => HttpResponse::NotFound(),
+            _ => HttpResponse::InternalServerError(),
+        };
+
+        builder.json(ErrorResponse { err })
+    }
+
+    // fn render_response(&self) -> HttpResponse {
+    //     self.error_response()
+    // }
 }
