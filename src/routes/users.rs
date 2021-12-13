@@ -35,4 +35,12 @@ fn create_user(item: web::Json<UserInput>, pool: web::Data<Pool>) -> impl Respon
     // .poll(self: Pin<&mut Self>, cx: &mut Context<'_>)
 }
 
-
+fn find_user(name: web::Path<String>, pool: web::Data<Pool>) -> impl Responder {
+    web::block(move || {
+        let conn = &pool.get().unwrap();
+        let name = name.into_inner();
+        let key = models::UserKey::USERNAME(name.as_str());
+        models::find_user(conn, key)
+    })
+    .then(convert)
+}
