@@ -6,6 +6,7 @@ extern crate serde_json;
 use actix_web::{middleware, App, HttpServer};
 use diesel::pg::{self, PgConnection};
 use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 use std::env;
 
@@ -14,7 +15,7 @@ mod models;
 mod routes;
 mod schema;
 
-type Pool = pg::Pool<PgConnection>;
+type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 pub struct Blog {
     port: u16,
@@ -29,7 +30,8 @@ impl Blog {
         dotenv().ok();
 
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+        PgConnection::establish(&database_url)
+            .expect(&format!("Error connecting to {}", database_url))
     }
 
     pub async fn run(&self) -> std::io::Result<()> {
