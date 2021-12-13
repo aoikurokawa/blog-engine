@@ -1,1 +1,1 @@
-DROP INDEX username_unique_index
+DROP INDEX username_unique_idx
