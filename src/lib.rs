@@ -35,8 +35,6 @@ impl Blog {
     }
 
     pub async fn run(&self) -> std::io::Result<()> {
-        // let manager = ConnectionManager::<>
-
         println!("Starting http server: 127.0.0.1:{}", self.port);
         HttpServer::new(move || {
             App::new()
