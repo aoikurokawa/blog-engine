@@ -44,3 +44,13 @@ fn find_user(name: web::Path<String>, pool: web::Data<Pool>) -> impl Responder {
     })
     .then(convert)
 }
+
+fn get_user(user_id: web::Path<i32>, pool: web::Data<Pool>) -> impl Responder {
+    web::block(move || {
+        let conn = &pool.get().unwrap();
+        let id = user_id.into_inner();
+        let key = models::UserKey::ID(id);
+        models::find_user(conn, key)
+    })
+    .then(convert)
+}
