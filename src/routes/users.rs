@@ -1,8 +1,10 @@
-use crate::errors::AppError;
-use crate::routes::convert;
-use crate::{models, Pool};
-use actix_web::{web, HttpResponse, Responder};
-use futures::future::Future;
+// use crate::errors::AppError;
+// use crate::routes::convert;
+use crate::{Pool};
+use crate::models::{User};
+use crate::models;
+use actix_web::{web, Error, HttpResponse};
+// use futures::future::Future;
 // use futures_util::future::future::FutureExt;
 use serde::{Deserialize, Serialize};
 
@@ -31,33 +33,40 @@ struct UserInput {
 //     })
 // }
 
-async fn create_user(item: web::Json<UserInput>, pool: web::Data<Pool>) -> impl Responder {
-    web::block(move || {
+async fn create_user(
+    item: web::Json<UserInput>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
         let conn = &pool.get().unwrap();
         let username = item.into_inner().username;
         models::create_user(conn, username.as_str())
     })
-    .then(convert)
-    // .poll(self: Pin<&mut Self>, cx: &mut Context<'_>)
+    .await
+    .map(|user| HttpResponse::Created().json(user))
+    .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-async fn find_user(name: web::Path<String>, pool: web::Data<Pool>) -> impl Responder {
-    web::block(move || {
+async fn find_user(name: web::Path<String>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
         let conn = &pool.get().unwrap();
         let name = name.into_inner();
         let key = models::UserKey::USERNAME(name.as_str());
         models::find_user(conn, key)
     })
-    .then(convert)
+    .await
+    .map(|user| HttpResponse::Ok().json(user))
+    .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-async fn get_user(user_id: web::Path<i32>, pool: web::Data<Pool>) -> impl Responder {
-    web::block(move || {
+async fn get_user(user_id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
         let conn = &pool.get().unwrap();
         let id = user_id.into_inner();
         let key = models::UserKey::ID(id);
         models::find_user(conn, key)
     })
-    .then(convert)
+    .await
+    .map(|user| HttpResponse::Ok().json(user))
+    .map_err(|_| HttpResponse::InternalServerError())?)
 }
-

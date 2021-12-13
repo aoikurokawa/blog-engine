@@ -1,8 +1,18 @@
+#[macro_use]
+extern crate diesel;
+
 use actix_web::{middleware, App, HttpServer};
 use diesel::pg::PgConnection;
-use diesel::r2d2::{self, ConnectionManager, Pool};
+use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 use std::env;
+
+mod routes;
+mod schema;
+mod errors;
+mod models;
+
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
