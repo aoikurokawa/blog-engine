@@ -33,16 +33,4 @@ impl Blog {
         PgConnection::establish(&database_url)
             .expect(&format!("Error connecting to {}", database_url))
     }
-
-    pub async fn run(&self) -> std::io::Result<()> {
-        println!("Starting http server: 127.0.0.1:{}", self.port);
-        HttpServer::new(move || {
-            App::new()
-                .wrap(middleware::Logger::default())
-                .configure(routes::users::configure)
-        })
-        .bind(("127.0.0.1", self.port))?
-        .run()
-        .await
-    }
 }
