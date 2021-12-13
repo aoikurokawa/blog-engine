@@ -1,5 +1,5 @@
 use crate::errors::AppError;
-use crate::schema::users;
+use crate::schema::*;
 use diesel::prelude::*;
 use serde::Serialize;
 
