@@ -3,8 +3,7 @@ extern crate diesel;
 #[macro_use]
 extern crate serde_json;
 
-use actix_web::{middleware, App, HttpServer};
-use diesel::pg::{self, PgConnection};
+use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
