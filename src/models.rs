@@ -1,3 +1,4 @@
+use actix_web::Error;
 use crate::errors::AppError;
 use crate::schema::*;
 use diesel::prelude::*;
@@ -87,3 +88,13 @@ pub fn publish_post(conn: &PgConnection, post_id: i32) -> Result<Post> {
             .map_err(Into::into)
     })
 }
+
+pub fn all_posts(conn: &PgConnection) -> Result<Vec<(Post, User)>> {
+    posts::table
+    .order(posts::id.desc())
+    .filter(posts::published.eq(true))
+    .inner_join(users::table)
+    .select((posts::all_columns, (users::id, users::username)))
+    .load::<(Post, User)>(conn)
+    .map_err(Into::into)
+} 
