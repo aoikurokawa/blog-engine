@@ -55,3 +55,35 @@ pub fn find_user<'a>(conn: &PgConnection, key: UserKey<'a>) -> Result<User> {
             .map_err(Into::into),
     }
 }
+
+pub fn create_post(conn: &PgConnection, user: &User, title: &str, body: &str) -> Result<Post> {
+    conn.transaction(|| {
+        diesel::insert_into(posts::table)
+            .values((
+                posts::user_id.eq(user.id),
+                posts::title.eq(title),
+                posts::body.eq(body),
+            ))
+            .execute(conn)?;
+
+        posts::table
+            .order(posts::id.desc())
+            .select(posts::all_columns)
+            .first(conn)
+            .map_err(Into::into)
+    })
+}
+
+pub fn publish_post(conn: &PgConnection, post_id: i32) -> Result<Post> {
+    conn.transaction(|| {
+        diesel::update(posts::table.filter(posts::id.eq(post_id)))
+            .set(posts::published.eq(true))
+            .execute(conn)?;
+
+        posts::table
+            .find(post_id)
+            .select(posts::all_columns)
+            .first(conn)
+            .map_err(Into::into)
+    })
+}
