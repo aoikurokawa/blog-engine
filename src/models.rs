@@ -98,14 +98,30 @@ pub fn publish_post(conn: &PgConnection, post_id: i32) -> Result<Post> {
     })
 }
 
-pub fn all_posts(conn: &PgConnection) -> Result<Vec<(Post, User)>> {
-    posts::table
+pub fn all_posts(conn: &PgConnection) -> Result<Vec<((Post, User), Vec<(Comment, User)>)>> {
+    // posts::table
+    //     .order(posts::id.desc())
+    //     .filter(posts::published.eq(true))
+    //     .inner_join(users::table)
+    //     .select((posts::all_columns, (users::id, users::username)))
+    //     .load::<(Post, User)>(conn)
+    //     .map_err(Into::into)
+    let query = posts::table
         .order(posts::id.desc())
         .filter(posts::published.eq(true))
         .inner_join(users::table)
-        .select((posts::all_columns, (users::id, users::username)))
-        .load::<(Post, User)>(conn)
-        .map_err(Into::into)
+        .select((posts::all_columns, (users::id, users::username)));
+
+    let posts_with_user = query.load::<(Post, User)>(conn)?;
+    let (posts, post_users): (Vec<_>, Vec<_>) = posts_with_user.into_iter().unzip();
+
+    let comments = Comment::belonging_to(&posts)
+        .inner_join(users::table)
+        .select((comments::all_columns, (users::id, users::username)))
+        .load::<(Comment, User)>(conn)?
+        .grouped_by(&posts);
+
+    Ok(posts.into_iter().zip(post_users).zip(comments).collect())
 }
 
 pub fn user_posts(conn: &PgConnection, user_id: i32) -> Result<Vec<Post>> {
