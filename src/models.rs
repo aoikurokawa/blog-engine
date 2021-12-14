@@ -139,3 +139,12 @@ pub fn create_comment(
             .map_err(Into::into)
     })
 }
+
+pub fn post_comments(conn: &PgConnection, post_id: i32) -> Result<Vec<(Comment, User)>> {
+    comments::table
+        .filter(comments::post_id.eq(post_id))
+        .inner_join(users::table)
+        .select((comments::all_columns, (users::id, users::username)))
+        .load::<(Comment, User)>(conn)
+        .map_err(Into::into)
+}
