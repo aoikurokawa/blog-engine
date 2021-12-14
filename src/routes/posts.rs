@@ -31,3 +31,16 @@ async fn add_post(
     .map(|post| HttpResponse::Created().json(post))
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
+
+async fn publish_post(
+    post_id: web::Path<i32>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
+        let conn = &pool.get().unwrap();
+        models::publish_post(conn, post_id.into_inner())
+    })
+    .await
+    .map(|post| HttpResponse::Ok().json(post))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
