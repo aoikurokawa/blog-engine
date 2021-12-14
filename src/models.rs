@@ -98,3 +98,12 @@ pub fn all_posts(conn: &PgConnection) -> Result<Vec<(Post, User)>> {
     .load::<(Post, User)>(conn)
     .map_err(Into::into)
 } 
+
+pub fn user_posts(conn: &PgConnection, user_id: i32) -> Result<Vec<Post>> {
+    posts::table
+        .filter(posts::user_id.eq(user_id))
+        .order(posts::id.desc())
+        .select(posts::all_columns)
+        .load::<Post>(conn)
+        .map_err(Into::into)
+}
