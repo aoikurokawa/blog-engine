@@ -1,4 +1,3 @@
-use actix_web::Error;
 use crate::errors::AppError;
 use crate::schema::*;
 use diesel::prelude::*;

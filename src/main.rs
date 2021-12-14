@@ -7,10 +7,10 @@ use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 use std::env;
 
-mod routes;
-mod schema;
 mod errors;
 mod models;
+mod routes;
+mod schema;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .data(pool.clone())
             .wrap(middleware::Logger::default())
             .configure(routes::users::configure)
+            .configure(routes::posts::configure)
     })
     .bind("127.0.0.1:8080")?
     .run()
