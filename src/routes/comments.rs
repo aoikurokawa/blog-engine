@@ -41,3 +41,16 @@ async fn post_comments(
     .map(|comment| HttpResponse::Ok().json(comment))
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
+
+async fn user_comments(
+    user_id: web::Path<i32>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
+        let conn = &pool.get().unwrap();
+        models::user_comments(conn, user_id.into_inner())
+    })
+    .await
+    .map(|comment| HttpResponse::Ok().json(comment))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
