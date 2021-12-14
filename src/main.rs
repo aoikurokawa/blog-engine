@@ -35,6 +35,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .configure(routes::users::configure)
             .configure(routes::posts::configure)
+            .configure(routes::comments::configure)
     })
     .bind("127.0.0.1:8080")?
     .run()
