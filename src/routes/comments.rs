@@ -12,6 +12,15 @@ struct CommentInput {
     body: String,
 }
 
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::resource("/users/{id}/comments").route(web::get().to(user_comments)))
+        .service(
+            web::resource("/posts/{id}/comments")
+                .route(web::post().to(add_comment))
+                .route(web::get().to(post_comments)),
+        );
+}
+
 async fn add_comment(
     post_id: web::Path<i32>,
     comment: web::Json<CommentInput>,
