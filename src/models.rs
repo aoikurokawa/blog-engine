@@ -21,6 +21,16 @@ pub struct Post {
     pub published: bool,
 }
 
+#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
+#[belongs_to(User)]
+#[belongs_to(Post)]
+pub struct Comment {
+    pub id: i32,
+    pub user_id: i32,
+    pub post_id: i32,
+    pub body: String,
+}
+
 pub fn create_user(conn: &PgConnection, username: &str) -> Result<User> {
     conn.transaction(|| {
         diesel::insert_into(users::table)
@@ -90,13 +100,13 @@ pub fn publish_post(conn: &PgConnection, post_id: i32) -> Result<Post> {
 
 pub fn all_posts(conn: &PgConnection) -> Result<Vec<(Post, User)>> {
     posts::table
-    .order(posts::id.desc())
-    .filter(posts::published.eq(true))
-    .inner_join(users::table)
-    .select((posts::all_columns, (users::id, users::username)))
-    .load::<(Post, User)>(conn)
-    .map_err(Into::into)
-} 
+        .order(posts::id.desc())
+        .filter(posts::published.eq(true))
+        .inner_join(users::table)
+        .select((posts::all_columns, (users::id, users::username)))
+        .load::<(Post, User)>(conn)
+        .map_err(Into::into)
+}
 
 pub fn user_posts(conn: &PgConnection, user_id: i32) -> Result<Vec<Post>> {
     posts::table
