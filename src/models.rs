@@ -124,13 +124,26 @@ pub fn all_posts(conn: &PgConnection) -> Result<Vec<((Post, User), Vec<(Comment,
     Ok(posts.into_iter().zip(post_users).zip(comments).collect())
 }
 
-pub fn user_posts(conn: &PgConnection, user_id: i32) -> Result<Vec<Post>> {
-    posts::table
+pub fn user_posts(conn: &PgConnection, user_id: i32) -> Result<Vec<(Post, Vec<(Comment, User)>)>> {
+    // posts::table
+    //     .filter(posts::user_id.eq(user_id))
+    //     .order(posts::id.desc())
+    //     .select(posts::all_columns)
+    //     .load::<Post>(conn)
+    //     .map_err(Into::into)
+    let posts = posts::table
         .filter(posts::user_id.eq(user_id))
-        .order(posts::id.desc())
+        .order(posts::user_id.desc())
         .select(posts::all_columns)
-        .load::<Post>(conn)
-        .map_err(Into::into)
+        .load::<Post>(conn)?;
+
+    let comments = Comment::belonging_to(&posts)
+        .inner_join(users::table)
+        .select((comments::all_columns, (users::id, users::username)))
+        .load::<(Comment, User)>(conn)?
+        .grouped_by(&posts);
+
+    Ok(posts.into_iter().zip(comments).collect())
 }
 
 pub fn create_comment(
