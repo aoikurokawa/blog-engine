@@ -6,6 +6,16 @@ use diesel::prelude::*;
 use futures::Future;
 use serde::{Deserialize, Serialize};
 
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    cfg.service(
+        web::resource("/users/{id}/posts")
+            .route(web::post().to(add_post))
+            .route(web::get().to(user_post)),
+    )
+    .service(web::resource("/posts").route(web::get().to(all_posts)))
+    .service(web::resource("/posts/{id}/publish").route(web::post().to(publish_post)));
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct PostInput {
     title: String,
@@ -45,10 +55,20 @@ async fn publish_post(
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-async fn user_posts(user_id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+async fn user_post(user_id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
     Ok(web::block(move || {
         let conn = &pool.get().unwrap();
         models::user_posts(conn, user_id.into_inner())
+    })
+    .await
+    .map(|post| HttpResponse::Ok().json(post))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
+async fn all_posts(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
+        let conn = &pool.get().unwrap();
+        models::all_posts(conn)
     })
     .await
     .map(|post| HttpResponse::Ok().json(post))
