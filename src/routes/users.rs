@@ -1,11 +1,6 @@
-// use crate::errors::AppError;
-// use crate::routes::convert;
 use crate::{Pool};
-use crate::models::{User};
 use crate::models;
 use actix_web::{web, Error, HttpResponse};
-// use futures::future::Future;
-// use futures_util::future::future::FutureExt;
 use serde::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
@@ -18,20 +13,6 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
 struct UserInput {
     username: String,
 }
-
-// async fn create_user(
-//     item: web::Json<UserInput>,
-//     pool: web::Data<Pool>,
-// ) -> impl Future<Item = HttpResponse, Error = AppError> {
-//     web::block(move || {
-//         let conn = &pool.get().unwrap();
-//         let username = item.into_inner().username;
-//         models::create_user(conn, username.as_str())
-//     })
-//     .then(|res| {
-//         res.map(|d| HttpResponse::Ok().json(d)).map_err(Into::into)
-//     })
-// }
 
 async fn create_user(
     item: web::Json<UserInput>,
