@@ -44,3 +44,13 @@ async fn publish_post(
     .map(|post| HttpResponse::Ok().json(post))
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
+
+async fn user_posts(user_id: web::Path<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || {
+        let conn = &pool.get().unwrap();
+        models::user_posts(conn, user_id.into_inner())
+    })
+    .await
+    .map(|post| HttpResponse::Ok().json(post))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
