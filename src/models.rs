@@ -11,6 +11,16 @@ pub struct User {
     pub username: String,
 }
 
+#[derive(Queryable, Associations, Identifiable, Serialize, Debug)]
+#[belongs_to(User)]
+pub struct Post {
+    pub id: i32,
+    pub user_id: i32,
+    pub title: String,
+    pub body: String,
+    pub published: bool,
+}
+
 pub fn create_user(conn: &PgConnection, username: &str) -> Result<User> {
     conn.transaction(|| {
         diesel::insert_into(users::table)
