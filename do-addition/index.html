@@ -6,10 +6,10 @@
   </head>
   <body>
     <script type="module">
-      import init, {greet} from "./pkg/do_addition.js";
+      import init, {add} from "./pkg/do_addition.js";
       init()
         .then(() => {
-          greet("WebAssembly")
+          console.log(add(1, 2))
         });
     </script>
   </body>
