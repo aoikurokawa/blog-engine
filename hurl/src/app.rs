@@ -87,3 +87,14 @@ impl Method {
         }
     }
 }
+
+#[derive(Debug)]
+pub enum Parameter {
+    Header { key: String, value: String },
+    Data { key: String, value: String },
+    RawJsonData { key: String, value: String },
+    Query { key: String, value: String },
+    FormFile { key: String, value: String },
+    DataFile { key: String, value: String },
+    RawJsonDataFile { key: String, value: String },
+}
