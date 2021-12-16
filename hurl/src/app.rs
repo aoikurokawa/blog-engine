@@ -64,3 +64,11 @@ pub enum Method {
     PATCH(MethodData),
     DELETE(MethodData),
 }
+
+#[derive(StructOpt, Debug)]
+pub struct MethodData {
+    pub url: String,
+
+    #[structopt(parse(try_from_str = parse_param))]
+    pub parameters: Vec<Parameter>,
+}
