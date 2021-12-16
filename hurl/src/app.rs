@@ -72,3 +72,18 @@ pub struct MethodData {
     #[structopt(parse(try_from_str = parse_param))]
     pub parameters: Vec<Parameter>,
 }
+
+impl Method {
+    pub fn data(&self) -> &MethodData {
+        use Method::*;
+
+        match self {
+            HEAD(x) => x,
+            GET(x) => x,
+            PUT(x) => x,
+            POST(x) => x,
+            PATCH(x) => x,
+            DELETE(x) => x,
+        }
+    }
+}
