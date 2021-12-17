@@ -142,3 +142,9 @@ fn gather_escapes<'a>(src: :'a str) -> Vec<Token<'a>> {
         }
     }
 }
+
+fn parse_param(src: &str) -> HurlResult<Parameter> {
+    debug!("Parsing: {}", src);
+    let separators = [":=@", "=@", "==", ":=", "@", "=", ":"];
+    let tokens = gather_escape(src);
+}
