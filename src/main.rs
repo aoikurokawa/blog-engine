@@ -4,6 +4,7 @@ extern crate env_logger;
 
 // mod schema;
 mod graphql_schema;
+mod type_defs;
 
 use std::io;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
