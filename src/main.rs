@@ -1,43 +1,26 @@
 #[macro_use]
-extern crate diesel;
+extern crate juniper;
+extern crate env_logger;
 
-use actix_web::{middleware, App, HttpServer};
-use diesel::pg::PgConnection;
-use diesel::r2d2::{self, ConnectionManager};
-use dotenv::dotenv;
-use std::env;
+// mod schema;
+mod graphql_schema;
 
-mod errors;
-mod models;
-mod routes;
-mod schema;
-
-pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+use std::io;
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    dotenv().ok();
-
-    std::env::set_var("RUST_LOG", "actix-web=info");
+async fn main() -> io::Result<()> {
     env_logger::init();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool.");
-
-    // let app = Blog::new(8998);
-    println!("Starting http server: 127.0.0.1:8080");
-    HttpServer::new(move || {
-        App::new()
-            .data(pool.clone())
-            .wrap(middleware::Logger::default())
-            .configure(routes::users::configure)
-            .configure(routes::posts::configure)
-            .configure(routes::comments::configure)
+    HttpServer::new(|| {
+        App::new().route("/", web::get().to(index))
     })
-    .bind("127.0.0.1:8080")?
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
+
+async fn index() -> impl Responder {
+    HttpResponse::Ok().body("Hello World")
+}
+
