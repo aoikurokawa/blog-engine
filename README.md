@@ -3,7 +3,10 @@
 ## Why?
 
 ## Getting Started
-1. Run the app
+
+1. Install Diesel CLI
+
 ```bash
-cargo run
+cargo install diesel_cli --no-default-features --features sqlite
 ```
+* By default this installs a binary at ~/.cargo/bin
