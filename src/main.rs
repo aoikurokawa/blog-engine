@@ -1,4 +1,15 @@
+#[macro_use]
+extern crate diesel;
+extern crate serde;
+
+pub mod db;
+pub mod errors;
+pub mod models;
+pub mod routes;
+pub mod schema;
+
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+// use db::Blog;
 use dotenv::dotenv;
 use std::{env, io};
 
@@ -13,11 +24,9 @@ async fn main() -> io::Result<()> {
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    println!("Starting http server: 127.0.0.1:8080");
-    HttpServer::new(|| App::new().route("/", web::get().to(index)))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    let app = db::Blog::new(8080);
+
+    app.run(database_url).await
 }
 
 async fn index() -> impl Responder {
