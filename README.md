@@ -9,4 +9,4 @@
 ```bash
 cargo install diesel_cli --no-default-features --features sqlite
 ```
-* By default this installs a binary at ~/.cargo/bin
+By default this installs a binary at ~/.cargo/bin
