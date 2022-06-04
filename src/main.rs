@@ -1,15 +1,11 @@
 #[macro_use]
-extern crate juniper;
-extern crate env_logger;
-
-mod schema;
-// mod graphql_schema;
-// mod type_defs;
-// mod graphql;
+extern crate actix_web;
 
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use std::{env, io};
+
+pub type Result<T> = std::result::Result<T, std::io::Error>;
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
