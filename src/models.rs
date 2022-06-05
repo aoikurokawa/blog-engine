@@ -1,4 +1,5 @@
 use crate::errors::AppError;
+use crate::schema::comments;
 use crate::schema::posts;
 use crate::schema::users;
 use diesel::prelude::*;
@@ -29,4 +30,14 @@ pub struct Post {
     pub title: String,
     pub body: String,
     pub published: bool,
+}
+
+#[derive(Queryable, Associations, Serialize, Debug)]
+#[belongs_to(User)]
+#[belongs_to(Post)]
+pub struct Comment {
+    pub id: i32,
+    pub user_id: i32,
+    pub post_id: i32,
+    pub body: String,
 }
