@@ -114,3 +114,16 @@ async fn put(
 
     Ok(HttpResponse::Created().body("Update OK"))
 }
+
+#[delete("users/{id}")]
+async fn destroy(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
+    let id = path.into_inner();
+    let conn = db.get().unwrap();
+    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(id));
+
+    diesel::delete(target)
+        .execute(&conn)
+        .expect("Error deleting new post");
+
+    Ok(HttpResponse::Created().body("Delete Ok"))
+}

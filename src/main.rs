@@ -39,6 +39,7 @@ async fn main() -> io::Result<()> {
             .service(get_user)
             .service(post)
             .service(put)
+            .service(destroy)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
