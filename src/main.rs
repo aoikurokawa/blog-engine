@@ -38,6 +38,7 @@ async fn main() -> io::Result<()> {
             // .configure(routes::users::configure)
             .service(get_user)
             .service(post)
+            .service(put)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
