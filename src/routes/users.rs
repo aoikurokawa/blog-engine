@@ -7,7 +7,7 @@ use crate::routes::convert;
 use crate::{db, models};
 use crate::{db::Pool, models::User};
 
-use actix_web::{get, post, web, Error, HttpResponse, Responder, Result};
+use actix_web::{delete, get, post, put, web, Error, HttpResponse, Responder, Result};
 use diesel::prelude::*;
 use futures::Future;
 use serde_derive::{Deserialize, Serialize};
@@ -94,4 +94,23 @@ pub async fn post(
         .expect("Error saving new post");
 
     Ok(HttpResponse::Created().body("get ok"))
+}
+
+// Put API
+#[put("/users/{id}")]
+async fn put(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+    item: web::Json<models::User>,
+) -> Result<impl Responder> {
+    let id = path.into_inner();
+    let conn = db.get().unwrap();
+    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(id));
+
+    diesel::update(target)
+        .set(schema::users::dsl::email.eq(item.email.to_string()))
+        .execute(&conn)
+        .expect("Error updating new post");
+
+    Ok(HttpResponse::Created().body("Update OK"))
 }
