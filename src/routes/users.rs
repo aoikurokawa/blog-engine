@@ -18,11 +18,13 @@ use crate::schema::users::dsl::*;
 // use diesel::prelude::*;
 // use serde_derive::Serialize;
 
-// pub async fn configure(cfg: &mut web::ServiceConfig) {
-//     cfg.service(web::resource("/users").route(web::post().to(create_user)))
-//         .service(web::resource("/users/find/{name}").route(web::get().to(find_user)))
-//         .service(web::resource("/users/{id}").route(web::get().to(get_user)));
-// }
+pub fn configure(cfg: &mut web::ServiceConfig) {
+    cfg.service(get_five_users)
+        .service(get_user)
+        .service(create_user)
+        .service(put)
+        .service(destroy);
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct UserInput {
@@ -46,6 +48,21 @@ pub async fn create_user(
     Ok(HttpResponse::Ok().body("Posted successfully"))
 }
 
+#[get("/users")]
+pub async fn get_five_users(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+) -> Result<HttpResponse, AppError> {
+    let conn = db.get().unwrap();
+    let user_id = path.into_inner();
+    let results = users
+        // .filter(schema::users::id.eq(id))
+        .limit(5)
+        .load::<(i32, String, String)>(&conn)
+        .expect("Error loading users");
+    Ok(HttpResponse::Ok().json(results))
+}
+
 #[get("/users/{id}")]
 pub async fn get_user(
     db: web::Data<db::Pool>,
@@ -53,37 +70,12 @@ pub async fn get_user(
 ) -> Result<HttpResponse, AppError> {
     let conn = db.get().unwrap();
     let user_id = path.into_inner();
-    let results = users.filter(schema::users::id.eq(id)).limit(5).load::<User>(&conn).expect("Error loading users");
-    Ok(HttpResponse::Ok().json(user))
+    let results = users
+        .filter(schema::users::id.eq(user_id))
+        .load::<(i32, String, String)>(&conn)
+        .expect("Error finding users");
+    Ok(HttpResponse::Ok().json(results))
 }
-
-// #[get("/users/{id}")]
-// pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
-//     let conn = db.get().unwrap();
-//     let id = path.into_inner();
-//     let user = schema::users::table
-//         .select(schema::users::email)
-//         .filter(schema::users::id.eq(id))
-//         .load::<String>(&conn)
-//         .expect("error");
-
-//     Ok(web::Json(user))
-// }
-
-// pub fn find_user<'a>(conn: &PgConnection, key: UserKey<'a>) -> Result<User> {
-//     match key {
-//         UserKey::Username(name) => users::table
-//             .filter(users::username.eq(name))
-//             .select((users::id, users::username))
-//             .first::<User>(conn)
-//             .map_err(AppError::from),
-//         UserKey::ID(id) => users::table
-//             .find(id)
-//             .select((users::id, users::username))
-//             .first::<User>(conn)
-//             .map_err(Into::into),
-//     }
-// }
 
 // Put API
 #[put("/users/{id}")]
@@ -92,9 +84,9 @@ async fn put(
     path: web::Path<i32>,
     item: web::Json<models::User>,
 ) -> Result<impl Responder> {
-    let id = path.into_inner();
+    let user_id = path.into_inner();
     let conn = db.get().unwrap();
-    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(id));
+    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(user_id));
 
     diesel::update(target)
         .set(schema::users::dsl::email.eq(item.email.to_string()))
@@ -106,9 +98,9 @@ async fn put(
 
 #[delete("users/{id}")]
 async fn destroy(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
-    let id = path.into_inner();
+    let user_id = path.into_inner();
     let conn = db.get().unwrap();
-    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(id));
+    let target = schema::users::dsl::users.filter(schema::users::dsl::id.eq(user_id));
 
     diesel::delete(target)
         .execute(&conn)
