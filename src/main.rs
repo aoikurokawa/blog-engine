@@ -8,7 +8,7 @@ pub mod models;
 pub mod routes;
 pub mod schema;
 
-use crate::routes::users::get_user;
+use crate::routes::users::*;
 use actix_web::web::Data;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
@@ -37,6 +37,7 @@ async fn main() -> io::Result<()> {
             // .wrap(middleware::Logger::default())
             // .configure(routes::users::configure)
             .service(get_user)
+            .service(post)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

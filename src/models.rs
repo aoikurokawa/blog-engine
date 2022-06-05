@@ -1,14 +1,14 @@
 use crate::errors::AppError;
 use crate::schema::users;
 use diesel::prelude::*;
-use serde_derive::Serialize;
+use serde_derive::{Deserialize, Serialize};
 
 // type Result<T> = std::result::Result<T, AppError>;
 
-#[derive(Queryable, Identifiable, Serialize, Debug, PartialEq)]
+#[derive(Queryable, Serialize, Debug, PartialEq, Deserialize, Insertable)]
 #[table_name = "users"]
 pub struct User {
-    pub id: i32,
+    // pub id: i32,
     // pub username: String,
     pub email: String,
 }

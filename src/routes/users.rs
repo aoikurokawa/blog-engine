@@ -2,12 +2,12 @@ use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
 
-use crate::db;
 use crate::errors::AppError;
 use crate::routes::convert;
+use crate::{db, models};
 use crate::{db::Pool, models::User};
 
-use actix_web::{get, web, Error, HttpResponse, Responder, Result};
+use actix_web::{get, post, web, Error, HttpResponse, Responder, Result};
 use diesel::prelude::*;
 use futures::Future;
 use serde_derive::{Deserialize, Serialize};
@@ -76,3 +76,22 @@ pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<i
 //             .map_err(Into::into),
 //     }
 // }
+
+// Post API
+#[post("/users")]
+pub async fn post(
+    db: web::Data<db::Pool>,
+    item: web::Json<models::User>,
+) -> Result<impl Responder> {
+    let conn = db.get().unwrap();
+    let new_user = models::User {
+        // id: item.id as i32,
+        email: item.email.to_string(),
+    };
+    diesel::insert_into(schema::users::dsl::users)
+        .values(&new_user)
+        .execute(&conn)
+        .expect("Error saving new post");
+
+    Ok(HttpResponse::Created().body("get ok"))
+}
