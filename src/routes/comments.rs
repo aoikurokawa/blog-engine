@@ -1,12 +1,10 @@
-use crate::db;
-use crate::errors::AppError;
-use crate::models;
-use crate::schema::{comments, posts, users};
+use crate::{
+    db, models,
+    schema::{comments, posts, users},
+};
 use actix_web::{get, post, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
-
-// #[derive(Debug, Serialize, Deserialize)]
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(create_comment)

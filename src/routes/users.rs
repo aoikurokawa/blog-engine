@@ -84,7 +84,7 @@ async fn put(
     Ok(HttpResponse::Created().body("Update OK"))
 }
 
-#[delete("users/{id}")]
+#[delete("/users/{id}")]
 async fn destroy(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
     let user_id = path.into_inner();
     let conn = db.get().unwrap();

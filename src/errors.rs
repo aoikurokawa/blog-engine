@@ -2,7 +2,6 @@ use actix_web::error::BlockingError;
 use actix_web::HttpResponse;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::{DatabaseError, NotFound};
-use serde::Serializer;
 use serde_derive::Serialize;
 use std::fmt;
 

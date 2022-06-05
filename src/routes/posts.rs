@@ -1,15 +1,12 @@
-use crate::errors::AppError;
-// use crate::routes::
 use crate::{
-    db, models,
-    models::{Post, User},
+    db,
+    models::{self, Post},
     schema::posts,
     schema::users,
 };
 use actix_web::{get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
-// use futures::Future;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(add_post)
@@ -33,7 +30,7 @@ async fn add_post(
     let conn = db.get().unwrap();
     let id = path.into_inner();
     let post = models::find_user(&conn, id)
-        .and_then(|user| {
+        .and_then(|_| {
             let post = post.into_inner();
             let title = post.title;
             let body = post.body;

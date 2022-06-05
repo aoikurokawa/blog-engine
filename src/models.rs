@@ -1,12 +1,9 @@
-use crate::errors::AppError;
 use crate::schema::comments;
 use crate::schema::posts;
 use crate::schema::users;
 use diesel::prelude::*;
 use diesel::result::Error;
 use serde_derive::{Deserialize, Serialize};
-
-// type Result<T> = std::result::Result<T, AppError>;
 
 #[derive(Queryable, Serialize, Debug, PartialEq, Deserialize, Insertable)]
 #[table_name = "users"]
