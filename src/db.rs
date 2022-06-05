@@ -20,9 +20,9 @@ pub fn establish_connection() -> Pool {
     pool
 }
 
-pub struct Blog {
-    port: u16,
-}
+// pub struct Blog {
+//     port: u16,
+// }
 
 // impl Blog {
 //     pub fn new(port: u16) -> Self {

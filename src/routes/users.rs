@@ -2,16 +2,18 @@ use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
 
+use crate::db;
 use crate::errors::AppError;
 use crate::routes::convert;
 use crate::{db::Pool, models::User};
 
 use actix_web::{get, web, Error, HttpResponse, Responder, Result};
+use diesel::prelude::*;
 use futures::Future;
 use serde_derive::{Deserialize, Serialize};
 
 // use crate::errors::AppError;
-use crate::schema::users;
+use crate::schema;
 // use diesel::prelude::*;
 // use serde_derive::Serialize;
 
@@ -48,21 +50,16 @@ struct UserInput {
 // }
 
 #[get("/users/{id}")]
-pub async fn get_user(user_id: web::Path<i32>, pool: web::Data<Pool>) -> Result<impl Responder> {
-    let conn = &pool.get().unwrap();
-    // format!("Hello {user_id}!")
-    let id = user_id.into_inner();
-    // let user = schema::users::table.select(schema::users)
-    // let key = models::UserKey::ID(id);
-    let user = users::table
-        .select((users::id, users::username))
-        .filter(users::id.eq(id))
+pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
+    let conn = db.get().unwrap();
+    let id = path.into_inner();
+    let user = schema::users::table
+        .select(schema::users::email)
+        .filter(schema::users::id.eq(id))
         .load::<String>(&conn)
         .expect("error");
-        // .first::<User>(conn);
 
     Ok(web::Json(user))
-    // Ok(HttpResponse::Ok().json(user))
 }
 
 // pub fn find_user<'a>(conn: &PgConnection, key: UserKey<'a>) -> Result<User> {

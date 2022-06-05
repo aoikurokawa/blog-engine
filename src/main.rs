@@ -44,6 +44,4 @@ async fn main() -> io::Result<()> {
     .await
 }
 
-async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello World")
-}
+
