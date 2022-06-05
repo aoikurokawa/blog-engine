@@ -8,12 +8,17 @@ pub mod models;
 pub mod routes;
 pub mod schema;
 
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-// use db::Blog;
+use actix_web::web::Data;
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 use std::{env, io};
+use crate::routes::users::{get_user};
 
-pub type Result<T> = std::result::Result<T, std::io::Error>;
+// pub type Result<T> = std::result::Result<T, std::io::Error>;
+// type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -22,11 +27,21 @@ async fn main() -> io::Result<()> {
     std::env::set_var("RUST_LOG", "actix-web=info");
     env_logger::init();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    // let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    let app = db::Blog::new(8080);
+    // let app = db::Blog::new(8080);
+    let pool = db::establish_connection();
 
-    app.run(database_url).await
+    HttpServer::new(move || {
+        App::new()
+            .app_data(pool.clone())
+            // .wrap(middleware::Logger::default())
+            // .configure(routes::users::configure)
+            .service(get_user)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
 
 async fn index() -> impl Responder {

@@ -3,7 +3,6 @@ pub mod users;
 pub use users::*;
 
 use crate::errors::AppError;
-// use crate::schema::users;
 
 use actix_web::HttpResponse;
 

@@ -2,6 +2,7 @@ use actix_web::error::BlockingError;
 use actix_web::HttpResponse;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::{DatabaseError, NotFound};
+use serde::Serializer;
 use serde_derive::Serialize;
 use std::fmt;
 
@@ -34,12 +35,45 @@ impl From<diesel::result::Error> for AppError {
     }
 }
 
-// impl From<BlockingError<AppError>> for AppError {
-//     fn from(e: BlockingError<AppError>) -> Self {
-//         match e {
-//             BlockingError => inner,
+impl From<BlockingError> for AppError {
+    fn from(e: BlockingError) -> Self {
+        match e {
+            _ => AppError::OperationCanceled,
+        }
+    }
+}
 
-//         }
+// impl serde::Serialize for AppError {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where
+//         S: Serializer,
+//     {
+//         let mut s = serializer.serialize_struct("AppError", 4)?;
+//         s.serialize_field("RecordAlreadyExists", &self::RecordAlreadyExists)?;
+        
+//         // s.serialize_field("name", &self.name)?;
+//         // s.serialize_field("age", &self.age)?;
+//         // s.serialize_field("phones", &self.phones)?;
+//         // s.end()
+//     }
+// }
+
+// impl serde::Serialize for diesel::result::Error {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where
+//         S: Serializer,
+//     {
+//         let mut s = serializer.serialize_struct("Person", 3)?;
+//         s.serialize_field("name", &self.name)?;
+//         s.serialize_field("age", &self.age)?;
+//         s.serialize_field("phones", &self.phones)?;
+//         s.end()
+//     }
+// }
+
+// impl serde::Serialize for diesel::result::Error {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+
 //     }
 // }
 
