@@ -1,13 +1,21 @@
 use crate::errors::AppError;
 // use crate::routes::
-use crate::{db, models, schema};
-use actix_web::{post, put, web, Error, HttpResponse, Result};
+use crate::{
+    db, models,
+    models::{Post, User},
+    schema::posts,
+    schema::users,
+};
+use actix_web::{get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 // use futures::Future;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(add_post).service(publish_post);
+    cfg.service(add_post)
+        .service(publish_post)
+        .service(user_posts)
+        .service(all_posts);
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -30,7 +38,7 @@ async fn add_post(
             let title = post.title;
             let body = post.body;
 
-            Ok(models::Post {
+            Ok(Post {
                 user_id: id,
                 title,
                 body,
@@ -38,7 +46,7 @@ async fn add_post(
             })
         })
         .unwrap();
-    diesel::insert_into(schema::posts::dsl::posts)
+    diesel::insert_into(posts::dsl::posts)
         .values(&post)
         .execute(&conn)
         .expect("Error posting");
@@ -52,12 +60,42 @@ async fn publish_post(
 ) -> Result<HttpResponse, Error> {
     let conn = db.get().unwrap();
     let post_id = path.into_inner();
-    let target = schema::posts::dsl::posts.filter(schema::posts::dsl::id.eq(post_id));
+    let target = posts::dsl::posts.filter(posts::dsl::id.eq(post_id));
 
     diesel::update(target)
-        .set(schema::posts::dsl::published.eq(true))
+        .set(posts::dsl::published.eq(true))
         .execute(&conn)
         .expect("Error updating new post");
 
     Ok(HttpResponse::Ok().body("Publish successfully"))
+}
+
+#[get("/post/{user_id}")]
+async fn user_posts(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
+    let conn = db.get().unwrap();
+    let user_id = path.into_inner();
+
+    let result = posts::table
+        .filter(posts::user_id.eq(user_id))
+        .order(posts::id.desc())
+        .select(posts::all_columns)
+        .load::<(i32, i32, String, String, bool)>(&conn)
+        .expect("Failed to get");
+
+    Ok(HttpResponse::Ok().json(result))
+}
+
+#[get("/posts")]
+async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
+    let conn = db.get().unwrap();
+
+    let result = posts::table
+        .order(posts::id.desc())
+        .filter(posts::published.eq(true))
+        .inner_join(users::table)
+        .select((posts::all_columns, (users::id, users::username)))
+        .load::<((i32, i32, String, String, bool), (i32, String))>(&conn)
+        .expect("Failed to get all posts");
+
+    Ok(HttpResponse::Ok().json(result))
 }
