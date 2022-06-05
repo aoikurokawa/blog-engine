@@ -14,6 +14,7 @@ use serde_derive::{Deserialize, Serialize};
 
 // use crate::errors::AppError;
 use crate::schema;
+use crate::schema::users::dsl::*;
 // use diesel::prelude::*;
 // use serde_derive::Serialize;
 
@@ -28,39 +29,46 @@ struct UserInput {
     username: String,
 }
 
-// pub async fn create_user(
-//     item: web::Json<UserInput>,
-//     pool: web::Data<Pool>,
-// ) -> Result<HttpResponse, Error> {
-//     let conn = pool.get().await.map_err();
-//     let username = item.into_inner().username;
-//     let new_user = models::create_user(conn, username.as_str());
-//     Ok(HttpResponse::Ok().json(new_user))
-// }
-
-// pub async fn find_user(
-//     name: web::Path<String>,
-//     pool: web::Data<Pool>,
-// ) -> Result<HttpResponse, AppError> {
-//     let conn = &pool.get().unwrap();
-//     let name = name.into_inner();
-//     let key = models::UserKey::Username(name.as_str());
-//     let user = models::find_user(conn, key);
-//     Ok(HttpResponse::Ok().json(user))
-// }
+#[post("/users")]
+pub async fn create_user(
+    db: web::Data<db::Pool>,
+    item: web::Json<models::User>,
+) -> Result<HttpResponse, Error> {
+    let conn = db.get().unwrap();
+    let new_user = models::User {
+        username: item.username.to_string(),
+        email: item.email.to_string(),
+    };
+    diesel::insert_into(schema::users::dsl::users)
+        .values(&new_user)
+        .execute(&conn)
+        .expect("Error posting");
+    Ok(HttpResponse::Ok().body("Posted successfully"))
+}
 
 #[get("/users/{id}")]
-pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
+pub async fn get_user(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+) -> Result<HttpResponse, AppError> {
     let conn = db.get().unwrap();
-    let id = path.into_inner();
-    let user = schema::users::table
-        .select(schema::users::email)
-        .filter(schema::users::id.eq(id))
-        .load::<String>(&conn)
-        .expect("error");
-
-    Ok(web::Json(user))
+    let user_id = path.into_inner();
+    let results = users.filter(schema::users::id.eq(id)).limit(5).load::<User>(&conn).expect("Error loading users");
+    Ok(HttpResponse::Ok().json(user))
 }
+
+// #[get("/users/{id}")]
+// pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<impl Responder> {
+//     let conn = db.get().unwrap();
+//     let id = path.into_inner();
+//     let user = schema::users::table
+//         .select(schema::users::email)
+//         .filter(schema::users::id.eq(id))
+//         .load::<String>(&conn)
+//         .expect("error");
+
+//     Ok(web::Json(user))
+// }
 
 // pub fn find_user<'a>(conn: &PgConnection, key: UserKey<'a>) -> Result<User> {
 //     match key {
@@ -76,25 +84,6 @@ pub async fn get_user(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<i
 //             .map_err(Into::into),
 //     }
 // }
-
-// Post API
-#[post("/users")]
-pub async fn post(
-    db: web::Data<db::Pool>,
-    item: web::Json<models::User>,
-) -> Result<impl Responder> {
-    let conn = db.get().unwrap();
-    let new_user = models::User {
-        // id: item.id as i32,
-        email: item.email.to_string(),
-    };
-    diesel::insert_into(schema::users::dsl::users)
-        .values(&new_user)
-        .execute(&conn)
-        .expect("Error saving new post");
-
-    Ok(HttpResponse::Created().body("get ok"))
-}
 
 // Put API
 #[put("/users/{id}")]

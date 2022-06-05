@@ -8,24 +8,9 @@ use serde_derive::{Deserialize, Serialize};
 #[derive(Queryable, Serialize, Debug, PartialEq, Deserialize, Insertable)]
 #[table_name = "users"]
 pub struct User {
-    // pub id: i32,
-    // pub username: String,
+    pub username: String,
     pub email: String,
 }
-
-// pub fn create_user(conn: &PgConnection, username: &str) -> Result<User> {
-//     conn.transaction(|| {
-//         diesel::insert_into(users::table)
-//             .values((users::username.eq(username),))
-//             .execute(conn)?;
-
-//         users::table
-//             .order(users::id.desc())
-//             .select((users::id, users::username))
-//             .first(conn)
-//             .map_err(Into::into)
-//     })
-// }
 
 // pub enum UserKey<'a> {
 //     Username(&'a str),
