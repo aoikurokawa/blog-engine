@@ -32,11 +32,10 @@ pub struct Post {
     pub published: bool,
 }
 
-#[derive(Queryable, Associations, Serialize, Debug)]
+#[derive(Queryable, Associations, Serialize, Deserialize, Debug, Insertable)]
 #[belongs_to(User)]
 #[belongs_to(Post)]
 pub struct Comment {
-    pub id: i32,
     pub user_id: i32,
     pub post_id: i32,
     pub body: String,
