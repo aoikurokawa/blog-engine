@@ -8,17 +8,16 @@ pub mod models;
 pub mod routes;
 pub mod schema;
 
+use crate::routes::users::get_user;
 use actix_web::web::Data;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 use std::{env, io};
-use crate::routes::users::{get_user};
 
 // pub type Result<T> = std::result::Result<T, std::io::Error>;
 // type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
-
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -34,7 +33,7 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .app_data(pool.clone())
+            .app_data(Data::new(pool.clone()))
             // .wrap(middleware::Logger::default())
             // .configure(routes::users::configure)
             .service(get_user)
@@ -43,5 +42,3 @@ async fn main() -> io::Result<()> {
     .run()
     .await
 }
-
-
