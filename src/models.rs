@@ -1,6 +1,9 @@
 use crate::errors::AppError;
+use crate::schema::comments;
+use crate::schema::posts;
 use crate::schema::users;
 use diesel::prelude::*;
+use diesel::result::Error;
 use serde_derive::{Deserialize, Serialize};
 
 // type Result<T> = std::result::Result<T, AppError>;
@@ -8,41 +11,32 @@ use serde_derive::{Deserialize, Serialize};
 #[derive(Queryable, Serialize, Debug, PartialEq, Deserialize, Insertable)]
 #[table_name = "users"]
 pub struct User {
-    // pub id: i32,
-    // pub username: String,
+    pub username: String,
     pub email: String,
 }
 
-// pub fn create_user(conn: &PgConnection, username: &str) -> Result<User> {
-//     conn.transaction(|| {
-//         diesel::insert_into(users::table)
-//             .values((users::username.eq(username),))
-//             .execute(conn)?;
+pub fn find_user(conn: &PgConnection, id: i32) -> Result<User, Error> {
+    users::table
+        .find(id)
+        .select((users::username, users::email))
+        .first::<User>(conn)
+        .map_err(Into::into)
+}
 
-//         users::table
-//             .order(users::id.desc())
-//             .select((users::id, users::username))
-//             .first(conn)
-//             .map_err(Into::into)
-//     })
-// }
+#[derive(Queryable, Associations, Serialize, Debug, Insertable)]
+#[belongs_to(User)]
+pub struct Post {
+    pub user_id: i32,
+    pub title: String,
+    pub body: String,
+    pub published: bool,
+}
 
-// pub enum UserKey<'a> {
-//     Username(&'a str),
-//     ID(i32),
-// }
-
-// pub fn find_user<'a>(conn: &PgConnection, key: UserKey<'a>) -> Result<User> {
-//     match key {
-//         UserKey::Username(name) => users::table
-//             .filter(users::username.eq(name))
-//             .select((users::id, users::username))
-//             .first::<User>(conn)
-//             .map_err(AppError::from),
-//         UserKey::ID(id) => users::table
-//             .find(id)
-//             .select((users::id, users::username))
-//             .first::<User>(conn)
-//             .map_err(Into::into),
-//     }
-// }
+#[derive(Queryable, Associations, Serialize, Deserialize, Debug, Insertable)]
+#[belongs_to(User)]
+#[belongs_to(Post)]
+pub struct Comment {
+    pub user_id: i32,
+    pub post_id: i32,
+    pub body: String,
+}

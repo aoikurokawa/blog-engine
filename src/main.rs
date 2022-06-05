@@ -23,7 +23,8 @@ use std::{env, io};
 async fn main() -> io::Result<()> {
     dotenv().ok();
 
-    std::env::set_var("RUST_LOG", "actix-web=info");
+    std::env::set_var("RUST_LOG", "info");
+    std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
     // let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -35,11 +36,9 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(Data::new(pool.clone()))
             // .wrap(middleware::Logger::default())
-            // .configure(routes::users::configure)
-            .service(get_user)
-            .service(post)
-            .service(put)
-            .service(destroy)
+            .configure(routes::users::configure)
+            .configure(routes::posts::configure)
+            .configure(routes::comments::configure)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
