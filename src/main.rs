@@ -37,11 +37,7 @@ async fn main() -> io::Result<()> {
             .app_data(Data::new(pool.clone()))
             // .wrap(middleware::Logger::default())
             .configure(routes::users::configure)
-        // .service(get_five_users)
-        // .service(get_user)
-        // .service(create_user)
-        // .service(put)
-        // .service(destroy)
+            .configure(routes::posts::configure)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
