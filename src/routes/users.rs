@@ -3,20 +3,13 @@ use diesel::QueryDsl;
 use diesel::RunQueryDsl;
 
 use crate::errors::AppError;
-use crate::routes::convert;
 use crate::{db, models};
-use crate::{db::Pool, models::User};
 
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Responder, Result};
-use diesel::prelude::*;
-use futures::Future;
 use serde_derive::{Deserialize, Serialize};
 
-// use crate::errors::AppError;
 use crate::schema;
 use crate::schema::users::dsl::*;
-// use diesel::prelude::*;
-// use serde_derive::Serialize;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(get_five_users)
@@ -49,14 +42,9 @@ pub async fn create_user(
 }
 
 #[get("/users")]
-pub async fn get_five_users(
-    db: web::Data<db::Pool>,
-    path: web::Path<i32>,
-) -> Result<HttpResponse, AppError> {
+pub async fn get_five_users(db: web::Data<db::Pool>) -> Result<HttpResponse, AppError> {
     let conn = db.get().unwrap();
-    let user_id = path.into_inner();
     let results = users
-        // .filter(schema::users::id.eq(id))
         .limit(5)
         .load::<(i32, String, String)>(&conn)
         .expect("Error loading users");
