@@ -26,9 +26,7 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(pool.clone()))
-            .configure(routes::users::configure)
             .configure(routes::posts::configure)
-            .configure(routes::comments::configure)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

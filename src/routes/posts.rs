@@ -9,8 +9,7 @@ use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(add_post)
-        .service(publish_post)
+    cfg.service(publish_post)
         .service(category_posts)
         .service(all_posts);
 }
@@ -21,34 +20,34 @@ struct PostInput {
     body: String,
 }
 
-#[post("/post/{id}")]
-async fn add_post(
-    db: web::Data<db::Pool>,
-    path: web::Path<i32>,
-    post: web::Json<PostInput>,
-) -> Result<HttpResponse, Error> {
-    let conn = db.get().unwrap();
-    let id = path.into_inner();
-    let post = models::find_user(&conn, id)
-        .and_then(|_| {
-            let post = post.into_inner();
-            let title = post.title;
-            let body = post.body;
+// #[post("/post/{id}")]
+// async fn add_post(
+//     db: web::Data<db::Pool>,
+//     path: web::Path<i32>,
+//     post: web::Json<PostInput>,
+// ) -> Result<HttpResponse, Error> {
+//     let conn = db.get().unwrap();
+//     let id = path.into_inner();
+//     let post = models::find_user(&conn, id)
+//         .and_then(|_| {
+//             let post = post.into_inner();
+//             let title = post.title;
+//             let body = post.body;
 
-            Ok(Post {
-                user_id: id,
-                title,
-                body,
-                published: false,
-            })
-        })
-        .unwrap();
-    diesel::insert_into(posts::dsl::posts)
-        .values(&post)
-        .execute(&conn)
-        .expect("Error posting");
-    Ok(HttpResponse::Ok().body("Posted successfully"))
-}
+//             Ok(Post {
+//                 user_id: id,
+//                 title,
+//                 body,
+//                 published: false,
+//             })
+//         })
+//         .unwrap();
+//     diesel::insert_into(posts::dsl::posts)
+//         .values(&post)
+//         .execute(&conn)
+//         .expect("Error posting");
+//     Ok(HttpResponse::Ok().body("Posted successfully"))
+// }
 
 #[put("/post/publish/{post_id}")]
 async fn publish_post(
