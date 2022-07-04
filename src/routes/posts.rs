@@ -1,8 +1,10 @@
+use std::vec;
+
 use crate::{
     db,
     models::{self, Post},
-    schema::posts,
     schema::categories,
+    schema::posts,
 };
 use actix_web::{get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
@@ -18,36 +20,27 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
 struct PostInput {
     title: String,
     body: String,
+    category_id: i32,
 }
 
-// #[post("/post/{id}")]
-// async fn add_post(
-//     db: web::Data<db::Pool>,
-//     path: web::Path<i32>,
-//     post: web::Json<PostInput>,
-// ) -> Result<HttpResponse, Error> {
-//     let conn = db.get().unwrap();
-//     let id = path.into_inner();
-//     let post = models::find_user(&conn, id)
-//         .and_then(|_| {
-//             let post = post.into_inner();
-//             let title = post.title;
-//             let body = post.body;
-
-//             Ok(Post {
-//                 user_id: id,
-//                 title,
-//                 body,
-//                 published: false,
-//             })
-//         })
-//         .unwrap();
-//     diesel::insert_into(posts::dsl::posts)
-//         .values(&post)
-//         .execute(&conn)
-//         .expect("Error posting");
-//     Ok(HttpResponse::Ok().body("Posted successfully"))
-// }
+#[post("/post")]
+async fn create_post(
+    db: web::Data<db::Pool>,
+    post: web::Json<PostInput>,
+) -> Result<HttpResponse, Error> {
+    let conn = db.get().unwrap();
+    let post = Post {
+        title: post.title.clone(),
+        body: post.body.clone(),
+        category_id: post.category_id,
+        published: false,
+    };
+    diesel::insert_into(posts::dsl::posts)
+        .values(&post)
+        .execute(&conn)
+        .expect("Error posting");
+    Ok(HttpResponse::Ok().body("Publish successfully"))
+}
 
 #[put("/post/publish/{post_id}")]
 async fn publish_post(
@@ -67,7 +60,10 @@ async fn publish_post(
 }
 
 #[get("/post/{category_id}")]
-async fn category_posts(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
+async fn category_posts(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+) -> Result<HttpResponse, Error> {
     let conn = db.get().unwrap();
     let category_id = path.into_inner();
 
