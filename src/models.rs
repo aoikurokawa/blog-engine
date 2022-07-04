@@ -1,6 +1,7 @@
 use crate::schema::comments;
 use crate::schema::posts;
 use crate::schema::users;
+use crate::schema::categories;
 use diesel::prelude::*;
 use diesel::result::Error;
 use serde_derive::{Deserialize, Serialize};
@@ -37,3 +38,11 @@ pub struct Comment {
     pub post_id: i32,
     pub body: String,
 }
+
+#[derive(Queryable, Serialize, Deserialize, Debug, Insertable)]
+#[table_name = "categories"]
+pub struct Category {
+    pub id: i32,
+    pub name: String,
+}
+
