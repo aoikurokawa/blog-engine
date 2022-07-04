@@ -14,7 +14,6 @@ pub struct Post {
 #[derive(Queryable, Serialize, Deserialize, Debug, Insertable)]
 #[table_name = "categories"]
 pub struct Category {
-    pub id: i32,
     pub name: String,
 }
 

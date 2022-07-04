@@ -1,12 +1,10 @@
-use std::vec;
-
 use crate::{
     db,
     models::{self, Post},
     schema::categories,
     schema::posts,
 };
-use actix_web::{get, post, put, web, Error, HttpResponse, Result};
+use actix_web::{get, post, put,delete,  web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 
@@ -90,4 +88,14 @@ async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
         .expect("Failed to get all posts");
 
     Ok(HttpResponse::Ok().json(result))
+}
+
+#[delete("/post/delete/{post_id}")]
+async fn delete_post(db: web::Data<db::Pool>, path: web::Path<i32>
+) -> Result<HttpResponse, Error> {
+    let conn = db.get().unwrap();
+    let post_id = path.into_inner();
+    let result = diesel::delete(posts::table.filter(posts::id.eq(post_id))).execute(&conn).expect("Error deleting");
+    Ok(HttpResponse::Ok().json(result))
+
 }
