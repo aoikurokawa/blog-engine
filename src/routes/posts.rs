@@ -4,14 +4,16 @@ use crate::{
     schema::categories,
     schema::posts,
 };
-use actix_web::{get, post, put,delete,  web, Error, HttpResponse, Result};
+use actix_web::{delete, get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(create_post).service(publish_post)
+    cfg.service(create_post)
+        .service(publish_post)
         .service(category_posts)
-        .service(all_posts).service(delete_post);
+        .service(all_posts)
+        .service(delete_post);
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -91,11 +93,11 @@ async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
 }
 
 #[delete("/post/delete/{post_id}")]
-async fn delete_post(db: web::Data<db::Pool>, path: web::Path<i32>
-) -> Result<HttpResponse, Error> {
+async fn delete_post(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
     let conn = db.get().unwrap();
     let post_id = path.into_inner();
-    let result = diesel::delete(posts::table.filter(posts::id.eq(post_id))).execute(&conn).expect("Error deleting");
+    let result = diesel::delete(posts::table.filter(posts::id.eq(post_id)))
+        .execute(&conn)
+        .expect("Error deleting");
     Ok(HttpResponse::Ok().json(result))
-
 }
