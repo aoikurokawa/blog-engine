@@ -2,7 +2,7 @@ use crate::{
     db,
     models::{self, Post},
     schema::posts,
-    schema::users,
+    schema::categories,
 };
 use actix_web::{get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
@@ -11,7 +11,7 @@ use serde_derive::{Deserialize, Serialize};
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(add_post)
         .service(publish_post)
-        .service(user_posts)
+        .service(category_posts)
         .service(all_posts);
 }
 
@@ -67,13 +67,13 @@ async fn publish_post(
     Ok(HttpResponse::Ok().body("Publish successfully"))
 }
 
-#[get("/post/{user_id}")]
-async fn user_posts(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
+#[get("/post/{category_id}")]
+async fn category_posts(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
     let conn = db.get().unwrap();
-    let user_id = path.into_inner();
+    let category_id = path.into_inner();
 
     let result = posts::table
-        .filter(posts::user_id.eq(user_id))
+        .filter(posts::category_id.eq(category_id))
         .order(posts::id.desc())
         .select(posts::all_columns)
         .load::<(i32, i32, String, String, bool)>(&conn)
@@ -89,8 +89,8 @@ async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
     let result = posts::table
         .order(posts::id.desc())
         .filter(posts::published.eq(true))
-        .inner_join(users::table)
-        .select((posts::all_columns, (users::id, users::username)))
+        .inner_join(categories::table)
+        .select((posts::all_columns, (categories::id, categories::name)))
         .load::<((i32, i32, String, String, bool), (i32, String))>(&conn)
         .expect("Failed to get all posts");
 
