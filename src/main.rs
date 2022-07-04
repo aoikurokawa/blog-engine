@@ -27,6 +27,7 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(Data::new(pool.clone()))
             .configure(routes::posts::configure)
+            .configure(routes::categoris::configure)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

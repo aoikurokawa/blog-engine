@@ -9,9 +9,9 @@ use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(publish_post)
+    cfg.service(create_post).service(publish_post)
         .service(category_posts)
-        .service(all_posts);
+        .service(all_posts).service(delete_post);
 }
 
 #[derive(Debug, Serialize, Deserialize)]
