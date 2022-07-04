@@ -1,4 +1,11 @@
 table! {
+    categories (id) {
+        id -> Int4,
+        name -> Varchar,
+    }
+}
+
+table! {
     comments (id) {
         id -> Int4,
         user_id -> Int4,
@@ -30,6 +37,7 @@ joinable!(comments -> users (user_id));
 joinable!(posts -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
+    categories,
     comments,
     posts,
     users,
