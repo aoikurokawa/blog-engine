@@ -2,6 +2,8 @@
 
 ## Why?
 
+My portfolio
+
 ## Getting Started
 
 ### 1. Install Diesel CLI if you do not have in your machine
@@ -30,13 +32,13 @@ $ docker-compose up -d
 $ diesel setup
 ```
 
-### 4. To write sql code, 
+### 4. To write sql code,
 
 ```bash
 $ diesel migration generate create_....(table name)
 ```
 
-### 5. When finish, 
+### 5. When finish,
 
 ```bash
 $ diesel migration run
