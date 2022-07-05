@@ -1,7 +1,5 @@
-pub mod comments;
 pub mod posts;
-pub mod users;
+pub mod categoris;
 
-pub use comments::*;
 pub use posts::*;
-pub use users::*;
+pub use categoris::*;

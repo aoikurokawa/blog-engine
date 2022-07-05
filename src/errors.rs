@@ -42,40 +42,6 @@ impl From<BlockingError> for AppError {
     }
 }
 
-// impl serde::Serialize for AppError {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: Serializer,
-//     {
-//         let mut s = serializer.serialize_struct("AppError", 4)?;
-//         s.serialize_field("RecordAlreadyExists", &self::RecordAlreadyExists)?;
-        
-//         // s.serialize_field("name", &self.name)?;
-//         // s.serialize_field("age", &self.age)?;
-//         // s.serialize_field("phones", &self.phones)?;
-//         // s.end()
-//     }
-// }
-
-// impl serde::Serialize for diesel::result::Error {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: Serializer,
-//     {
-//         let mut s = serializer.serialize_struct("Person", 3)?;
-//         s.serialize_field("name", &self.name)?;
-//         s.serialize_field("age", &self.age)?;
-//         s.serialize_field("phones", &self.phones)?;
-//         s.end()
-//     }
-// }
-
-// impl serde::Serialize for diesel::result::Error {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-
-//     }
-// }
-
 #[derive(Debug, Serialize)]
 struct ErrorResponse {
     err: String,
@@ -92,7 +58,5 @@ impl actix_web::ResponseError for AppError {
         builder.json(ErrorResponse { err })
     }
 
-    // fn render_response(&self) -> HttpResponse {
-    //     self.error_response()
-    // }
+
 }
