@@ -1,4 +1,4 @@
-use crate::{db, models::Category, schema::categories};
+use crate::{db, errors::AppError, models::Category, schema::categories};
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
@@ -7,7 +7,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(create_category)
         .service(update_category)
         .service(all_categories)
-        .service(delete_post);
+        .service(delete_category);
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -64,11 +64,12 @@ async fn all_categories(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> 
 }
 
 #[delete("/category/delete/{category_id}")]
-async fn delete_post(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
+async fn delete_category(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+) -> Result<HttpResponse, AppError> {
     let conn = db.get().unwrap();
     let category_id = path.into_inner();
-    let result = diesel::delete(categories::table.filter(categories::id.eq(category_id)))
-        .execute(&conn)
-        .expect("Error deleting");
-    Ok(HttpResponse::Ok().json(result))
+    diesel::delete(categories::table.filter(categories::id.eq(category_id))).execute(&conn)?;
+    Ok(HttpResponse::Ok().body("Delete successfully"))
 }

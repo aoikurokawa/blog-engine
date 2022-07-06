@@ -13,7 +13,7 @@ table! {
         body -> Text,
         published -> Bool,
         created -> Timestamp,
-        updated -> Nullable<Timestamp>,
+        updated -> Timestamp,
     }
 }
 

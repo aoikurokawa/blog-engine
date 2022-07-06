@@ -1,10 +1,6 @@
-use crate::{
-    db,
-    models::{self, Post},
-    schema::categories,
-    schema::posts,
-};
+use crate::{db, errors::AppError, models::Post, schema::categories, schema::posts};
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Result};
+use chrono::prelude::*;
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 
@@ -34,6 +30,8 @@ async fn create_post(
         body: post.body.clone(),
         category_id: post.category_id,
         published: false,
+        created: Utc::now().naive_utc(),
+        updated: Utc::now().naive_utc(),
     };
     diesel::insert_into(posts::dsl::posts)
         .values(&post)
@@ -71,7 +69,7 @@ async fn category_posts(
         .filter(posts::category_id.eq(category_id))
         .order(posts::id.desc())
         .select(posts::all_columns)
-        .load::<(i32, i32, String, String, bool)>(&conn)
+        .load::<(i32, i32, String, String, bool, NaiveDateTime, NaiveDateTime)>(&conn)
         .expect("Failed to get");
 
     Ok(HttpResponse::Ok().json(result))
@@ -86,18 +84,22 @@ async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
         .filter(posts::published.eq(true))
         .inner_join(categories::table)
         .select((posts::all_columns, (categories::id, categories::name)))
-        .load::<((i32, i32, String, String, bool), (i32, String))>(&conn)
+        .load::<(
+            (i32, i32, String, String, bool, NaiveDateTime, NaiveDateTime),
+            (i32, String),
+        )>(&conn)
         .expect("Failed to get all posts");
 
     Ok(HttpResponse::Ok().json(result))
 }
 
 #[delete("/post/delete/{post_id}")]
-async fn delete_post(db: web::Data<db::Pool>, path: web::Path<i32>) -> Result<HttpResponse, Error> {
+async fn delete_post(
+    db: web::Data<db::Pool>,
+    path: web::Path<i32>,
+) -> Result<HttpResponse, AppError> {
     let conn = db.get().unwrap();
     let post_id = path.into_inner();
-    let result = diesel::delete(posts::table.filter(posts::id.eq(post_id)))
-        .execute(&conn)
-        .expect("Error deleting");
-    Ok(HttpResponse::Ok().json(result))
+    diesel::delete(posts::table.filter(posts::id.eq(post_id))).execute(&conn)?;
+    Ok(HttpResponse::Ok().body("Delete successfully"))
 }
