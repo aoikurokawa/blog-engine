@@ -12,6 +12,8 @@ table! {
         title -> Varchar,
         body -> Text,
         published -> Bool,
+        created -> Timestamp,
+        updated -> Nullable<Timestamp>,
     }
 }
 

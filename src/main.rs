@@ -10,6 +10,7 @@ pub mod schema;
 
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
+use actix_cors::Cors;
 use dotenv::dotenv;
 use std::io;
 
@@ -24,8 +25,9 @@ async fn main() -> io::Result<()> {
     let pool = db::establish_connection();
 
     HttpServer::new(move || {
-        App::new()
+       App::new()
             .app_data(Data::new(pool.clone()))
+            .wrap(Cors::permissive())
             .configure(routes::posts::configure)
             .configure(routes::categoris::configure)
     })
