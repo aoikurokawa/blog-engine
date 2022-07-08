@@ -27,7 +27,6 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
        App::new()
             .app_data(Data::new(pool.clone()))
-            .wrap(Cors::permissive())
             .configure(routes::posts::configure)
             .configure(routes::categoris::configure)
     })

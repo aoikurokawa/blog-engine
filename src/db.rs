@@ -17,4 +17,3 @@ pub fn establish_connection() -> Pool {
 
     pool
 }
-
