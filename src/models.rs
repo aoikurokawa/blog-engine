@@ -14,17 +14,17 @@ pub struct Post {
     pub updated: chrono::NaiveDateTime,
 }
 
-
 #[derive(Queryable, Serialize, Deserialize, Debug, Insertable)]
 #[table_name = "categories"]
 pub struct Category {
     pub name: String,
 }
 
-// impl Serialize for chrono::NaiveDateTime {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//         where
-//             S: serde::Serializer {
-//         serializer.serialize
-//     }
-// }
+#[derive(Debug, Serialize, Deserialize, Queryable)]
+pub struct User {
+    pub id: i32,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+    pub created_at: chrono::NaiveDateTime,
+}
