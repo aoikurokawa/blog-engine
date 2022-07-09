@@ -1,4 +1,4 @@
-use crate::{db, errors::AppError, models::Category, schema::categories};
+use crate::{db, errors::ServiceError, models::Category, schema::categories};
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde_derive::{Deserialize, Serialize};
@@ -67,7 +67,7 @@ async fn all_categories(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> 
 async fn delete_category(
     db: web::Data<db::Pool>,
     path: web::Path<i32>,
-) -> Result<HttpResponse, AppError> {
+) -> Result<HttpResponse, ServiceError> {
     let conn = db.get().unwrap();
     let category_id = path.into_inner();
     diesel::delete(categories::table.filter(categories::id.eq(category_id))).execute(&conn)?;

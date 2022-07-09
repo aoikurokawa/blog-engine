@@ -3,7 +3,7 @@ use crate::{
     db,
     models::{NewUser, User},
 };
-use actix_web::{delete, get, post, put, web, Error, HttpResponse, Responder, Result};
+use actix_web::{delete, get, post, web, Error, HttpResponse, Result};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
