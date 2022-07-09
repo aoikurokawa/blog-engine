@@ -40,14 +40,6 @@ impl From<diesel::result::Error> for ServiceError {
     }
 }
 
-// impl From<BlockingError> for AppError {
-//     fn from(e: BlockingError) -> Self {
-//         match e {
-//             _ => AppError::OperationCanceled,
-//         }
-//     }
-// }
-
 #[derive(Debug, Serialize)]
 struct ErrorResponse {
     err: String,
