@@ -1,4 +1,7 @@
-// use actix_web::Responder;
+use crate::models::{NewUser, User};
+use crate::schema::users::dsl::*;
+use serde::{Deserialize, Serialize};
+
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Responder, Result};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
@@ -6,6 +9,13 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
         .service(get_user_by_id)
         .service(add_user)
         .service(delete_user);
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct InputUser {
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
 }
 
 #[get("/users")]
