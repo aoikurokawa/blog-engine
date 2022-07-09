@@ -31,6 +31,7 @@ async fn main() -> io::Result<()> {
             .app_data(Data::new(pool.clone()))
             .configure(routes::posts::configure)
             .configure(routes::categoris::configure)
+            .configure(routes::users::configure)
     })
     .bind(format!("{}:{}", host, port))?
     .run()
