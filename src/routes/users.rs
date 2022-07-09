@@ -43,13 +43,27 @@ pub async fn get_user_by_id(
 }
 
 #[post("/users")]
-pub async fn add_user() -> impl Responder {
-    format!("hello from add user")
+pub async fn add_user(
+    db: web::Data<db::Pool>,
+    item: web::Json<InputUser>,
+) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || add_single_user(db, item))
+        .await
+        .map(|user| HttpResponse::Ok().json(user))
+        .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
 #[delete("/users/{id}")]
-pub async fn delete_user() -> impl Responder {
-    format!("hello from delete user")
+pub async fn delete_user(
+    db: web::Data<db::Pool>,
+    user_id: web::Path<i32>,
+) -> Result<HttpResponse, Error> {
+    Ok(
+        web::block(move || delete_single_user(db, user_id.into_inner()))
+            .await
+            .map(|user| HttpResponse::Ok().json(user))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
 }
 
 fn get_all_users(db: web::Data<db::Pool>) -> Result<Vec<User>, diesel::result::Error> {
