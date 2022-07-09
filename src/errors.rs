@@ -11,15 +11,21 @@ pub enum ServiceError {
     RecordNotFound,
     DatabaseError(diesel::result::Error),
     OperationCanceled,
+    InternalServerError,
+    JWKSFetchError,
 }
 
 impl std::fmt::Display for ServiceError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ServiceError::RecordAlreadyExists => write!(f, "This recored violates a unique constraint"),
+            ServiceError::RecordAlreadyExists => {
+                write!(f, "This recored violates a unique constraint")
+            }
             ServiceError::RecordNotFound => write!(f, "This record does not exists"),
             ServiceError::DatabaseError(e) => write!(f, "Database error: {:?}", e),
             ServiceError::OperationCanceled => write!(f, "The running operation was canceled"),
+            ServiceError::InternalServerError => write!(f, "Internal Server Error"),
+            ServiceError::JWKSFetchError => write!(f, "JWKSFetchError"),
         }
     }
 }
@@ -57,6 +63,4 @@ impl actix_web::ResponseError for ServiceError {
         };
         builder.json(ErrorResponse { err })
     }
-
-
 }
