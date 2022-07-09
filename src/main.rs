@@ -19,7 +19,6 @@ async fn main() -> io::Result<()> {
     dotenv().ok();
 
     std::env::set_var("RUST_LOG", "info");
-    std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
     let pool = db::establish_connection();
