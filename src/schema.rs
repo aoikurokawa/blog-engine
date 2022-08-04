@@ -17,9 +17,20 @@ table! {
     }
 }
 
+table! {
+    users (id) {
+        id -> Int4,
+        first_name -> Text,
+        last_name -> Text,
+        email -> Text,
+        create_at -> Timestamp,
+    }
+}
+
 joinable!(posts -> categories (category_id));
 
 allow_tables_to_appear_in_same_query!(
     categories,
     posts,
+    users,
 );

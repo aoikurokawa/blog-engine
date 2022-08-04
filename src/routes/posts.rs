@@ -1,4 +1,4 @@
-use crate::{db, errors::AppError, models::Post, schema::categories, schema::posts};
+use crate::{db, errors::ServiceError, models::Post, schema::categories, schema::posts};
 use actix_web::{delete, get, post, put, web, Error, HttpResponse, Result};
 use chrono::prelude::*;
 use diesel::prelude::*;
@@ -97,7 +97,7 @@ async fn all_posts(db: web::Data<db::Pool>) -> Result<HttpResponse, Error> {
 async fn delete_post(
     db: web::Data<db::Pool>,
     path: web::Path<i32>,
-) -> Result<HttpResponse, AppError> {
+) -> Result<HttpResponse, ServiceError> {
     let conn = db.get().unwrap();
     let post_id = path.into_inner();
     diesel::delete(posts::table.filter(posts::id.eq(post_id))).execute(&conn)?;
