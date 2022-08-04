@@ -1,4 +1,4 @@
-use defistory::run;
+use defistory::startup::run;
 use std::net::TcpListener;
 
 fn spawn_app() -> String {
