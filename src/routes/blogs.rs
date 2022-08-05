@@ -8,6 +8,7 @@ pub struct FormData {
 }
 
 pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
+    log::info!("Adding '{}' '{}' as a new blog", form.title, form.content);
     log::info!("Saving new blog details in the database");
     match sqlx::query!(
         r#"
@@ -22,14 +23,13 @@ pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
     .execute(pool.as_ref())
     .await
     {
-        Ok(_) => HttpResponse::Ok().finish(),
+        Ok(_) => {
+            log::info!("New blog have been saved");
+            HttpResponse::Ok().finish()
+        }
         Err(e) => {
-            println!("Failed to execute query: {}", e);
+            log::info!("Failed to execute query: {:?}", e);
             HttpResponse::InternalServerError().finish()
         }
     }
-}
-
-pub async fn fetch_all_blogs() -> HttpResponse {
-    HttpResponse::Ok().finish()
 }
