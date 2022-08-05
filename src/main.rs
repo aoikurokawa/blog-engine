@@ -1,8 +1,17 @@
-use defistory::run;
+use defistory::configuration::get_configuration;
+use defistory::startup::run;
+use env_logger::Env;
+use sqlx::PgPool;
 use std::net::TcpListener;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let address = TcpListener::bind("127.0.0.1:8000")?;
-    run(address)?.await
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    let configuration = get_configuration().expect("Failed to read configuration.");
+    let connection_pool = PgPool::connect_lazy(&configuration.database.connection_string())
+        .expect("Failed to connect Postgres.");
+    let address = format!("127.0.0.1:{}", configuration.application_port);
+    let listener = TcpListener::bind(address)?;
+    run(listener, connection_pool)?.await?;
+    Ok(())
 }
