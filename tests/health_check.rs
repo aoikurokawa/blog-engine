@@ -11,7 +11,7 @@ pub struct TestApp {
 async fn spawn_app() -> TestApp {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let address = format!("127.0.0.1:{}", port);
+    let address = format!("http://127.0.0.1:{}", port);
 
     let mut configuration = get_configuration().expect("Failed to read configuration.");
     configuration.database.database_name = uuid::Uuid::new_v4().to_string();
@@ -66,7 +66,7 @@ async fn health_check_works() {
 }
 
 #[tokio::test]
-async fn subscribe_returns_a_200_for_valid_form_data() {
+async fn post_blog_returns_a_200_for_valid_form_data() {
     // Arrange
     let app = spawn_app().await;
     let client = reqwest::Client::new();
