@@ -8,6 +8,7 @@ pub struct FormData {
 }
 
 pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
+    log::info!("Saving new blog details in the database");
     match sqlx::query!(
         r#"
             INSERT INTO blogs (id, title, content, created_at)
