@@ -41,9 +41,9 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
     let client = reqwest::Client::new();
 
     // Act
-    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+    let body = "title=HelloWorld&content=<h1>Hello world</h1>";
     let response = client
-        .post(&format!("{}/subscriptions", app_address))
+        .post(&format!("{}/blog", app_address))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(body)
         .send()
