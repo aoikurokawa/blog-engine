@@ -1,6 +1,6 @@
 application:
-  host: $HOST
-  port: $PORT
+  host: ${HOST}
+  port: ${PORT}
 database:
   host: "ec2-3-219-52-220.compute-1.amazonaws.com"
   port: 5432
