@@ -44,5 +44,5 @@ async fn post_blog_returns_a_400_for_invalid_form_data() {
         .expect("Failed to execute request.");
 
     // Assert
-    assert_eq!(500, response.status().as_u16());
+    assert_eq!(400, response.status().as_u16());
 }
