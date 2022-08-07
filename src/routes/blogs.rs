@@ -18,7 +18,7 @@ pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
     };
 
     if !new_blog.is_valid() {
-        return HttpResponse::InternalServerError().finish();
+        return HttpResponse::BadRequest().finish();
     }
 
     match insert_blog(&pool, &new_blog).await {
