@@ -1,4 +1,4 @@
-use crate::routes::{health_check, post_blog};
+use crate::routes::{get_blogs, health_check, post_blog};
 use actix_web::dev::Server;
 use actix_web::middleware::Logger;
 use actix_web::web::Data;
@@ -12,6 +12,7 @@ pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Er
         App::new()
             .wrap(Logger::default())
             .route("/health_check", web::get().to(health_check))
+            .route("/blogs", web::get().to(get_blogs))
             .route("/blog", web::post().to(post_blog))
             .app_data(db_pool.clone())
     })
