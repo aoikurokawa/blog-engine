@@ -44,5 +44,3 @@ async fn insert_blog(pool: &PgPool, new_blog: &NewBlog) -> Result<(), sqlx::Erro
 
     Ok(())
 }
-
-pub async fn get_blog_by_id()
