@@ -46,3 +46,18 @@ async fn post_blog_returns_a_400_for_invalid_form_data() {
     // Assert
     assert_eq!(400, response.status().as_u16());
 }
+
+#[tokio::test]
+async fn get_all_blogs_returns_a_200() {
+    let app = spawn_app().await;
+    let client = reqwest::Client::new();
+
+    let response = client
+        .get(&format!("{}/blogs", &app.address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+    // Assert
+    println!("{:?}", response);
+    assert_eq!(200, response.status().as_u16());
+}
