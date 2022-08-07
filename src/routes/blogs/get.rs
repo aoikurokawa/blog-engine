@@ -1,7 +1,8 @@
 use actix_web::{web, HttpResponse};
+use serde::{Deserialize, Serialize, Serializer};
 use sqlx::PgPool;
 
-#[derive(serde::Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Blog {
     id: uuid::Uuid,
     title: String,
