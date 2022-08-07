@@ -27,7 +27,7 @@ pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
     }
 }
 
-pub async fn insert_blog(pool: &PgPool, new_blog: &NewBlog) -> Result<(), sqlx::Error> {
+async fn insert_blog(pool: &PgPool, new_blog: &NewBlog) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
             INSERT INTO blogs (id, title, content, created_at)
@@ -44,3 +44,5 @@ pub async fn insert_blog(pool: &PgPool, new_blog: &NewBlog) -> Result<(), sqlx::
 
     Ok(())
 }
+
+pub async fn get_blog_by_id()
