@@ -1,4 +1,4 @@
-use crate::health_check::spawn_app;
+use crate::helpers::spawn_app;
 use defistory::configuration::{get_configuration, DatabaseSettings};
 use defistory::startup::run;
 use secrecy::ExposeSecret;
