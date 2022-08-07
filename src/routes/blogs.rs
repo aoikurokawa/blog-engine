@@ -1,3 +1,4 @@
+use crate::domain::NewBlog;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
 
@@ -10,26 +11,32 @@ pub struct FormData {
 pub async fn post_blog(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
     log::info!("Adding '{}' '{}' as a new blog", form.title, form.content);
     log::info!("Saving new blog details in the database");
-    match sqlx::query!(
+
+    let new_blog = NewBlog {
+        title: form.0.title,
+        content: form.0.content,
+    };
+
+    match insert_blog(&pool, &new_blog).await {
+        Ok(_) => HttpResponse::Ok().finish(),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
+
+pub async fn insert_blog(pool: &PgPool, new_blog: &NewBlog) -> Result<(), sqlx::Error> {
+    sqlx::query!(
         r#"
             INSERT INTO blogs (id, title, content, created_at)
             VALUES ($1, $2, $3, $4)
         "#,
         uuid::Uuid::new_v4(),
-        form.title,
-        form.content,
+        new_blog.title,
+        new_blog.content,
         chrono::Utc::now()
     )
-    .execute(pool.as_ref())
+    .execute(pool)
     .await
-    {
-        Ok(_) => {
-            log::info!("New blog have been saved");
-            HttpResponse::Ok().finish()
-        }
-        Err(e) => {
-            log::info!("Failed to execute query: {:?}", e);
-            HttpResponse::InternalServerError().finish()
-        }
-    }
+    .map_err(|e| e)?;
+
+    Ok(())
 }
