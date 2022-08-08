@@ -2,5 +2,5 @@
 CREATE TABLE categories(
     id uuid NOT NULL,
     PRIMARY KEY (id),
-    name TEXT NOT NULL,
+    name TEXT NOT NULL
 );
