@@ -25,11 +25,6 @@ async fn select_all_blogs(pool: &PgPool) -> Result<Vec<Blog>, sqlx::Error> {
     Ok(rows)
 }
 
-// #[derive(Deserialize)]
-// pub struct BlogId {
-//     blog_id: uuid::Uuid,
-// }
-
 pub async fn get_blog_by_id(
     pool: web::Data<PgPool>,
     path: web::Path<(uuid::Uuid,)>,
@@ -57,16 +52,4 @@ async fn select_blog_by_id(pool: &PgPool, blog_id: uuid::Uuid) -> Result<Blog, s
     };
 
     Ok(selected_blog)
-
-    // if result.is_some() {
-    //     let selected_blog: Blog = result.unwrap();
-    //     Ok(Some(Blog {
-    //         id: selected_blog.id,
-    //         title: selected_blog.title,
-    //         content: selected_blog.content,
-    //         created_at: selected_blog.created_at,
-    //     }))
-    // } else {
-    //     Ok(None)
-    // }
 }
