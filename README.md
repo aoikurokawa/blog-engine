@@ -1,8 +1,8 @@
-# DeFi Story
+# BLOG
 
 ## Why?
 
-My portfolio
+My blog
 
 ## Getting Started
 
