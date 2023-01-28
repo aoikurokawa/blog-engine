@@ -1,8 +1,0 @@
-application:
-  host: 0.0.0.0
-database:
-  host: "ec2-3-219-52-220.compute-1.amazonaws.com"
-  port: 5432
-  username: "xqdqeekmmzfibg"
-  password: "57f12d3355ae1064467d3de3c0f3f38e0db87813ce145793f2f412f0d4389940"
-  database_name: "da00kt1dtemv6v"
