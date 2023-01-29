@@ -6,19 +6,11 @@ My blog
 
 ## Getting Started
 
-### 1. Install Diesel CLI if you do not have in your machine
+### 1. Install 
 
 ```bash
-$ cargo install diesel_cli --no-default-features --features sqlite postgres
-```
-
-By default this installs a binary at ~/.cargo/bin
-
-If there is an error when you install postgres, please install libpq
-
-```bash
-$ brew install libpq
-```
+$ 
+```               
 
 ### 2. Create docker-compose.yml file and create a new docker container
 
@@ -26,19 +18,19 @@ $ brew install libpq
 $ docker-compose up -d
 ```
 
-### 3. Set DATABASE_URL in .env file, then run command
+### 3. 
 
 ```bash
-$ diesel setup
+$ 
 ```
 
-### 4. To write sql code,
+### 4. 
 
 ```bash
-$ diesel migration generate create_....(table name)
+$ 
 ```
 
-### 5. When finish,
+### 5. When finish
 
 ```bash
 $ diesel migration run
@@ -47,5 +39,5 @@ $ diesel migration run
 ### 6. Run the app
 
 ```bash
-$ cargo run
+$ go run main.go
 ```
