@@ -7,31 +7,56 @@
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="min-h-screen bg-gray-100">
-<header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white">
-  <nav class="px-8 py-6 flex items-center space-x-12">
-    <div class="text-4xl font-serif">Lenslocked</div>
-    <div class="flex-grow">
-      <a class="text-lg font-semibold hover:text-blue-100 pr-8" href="/">
-        Home
+<div class="max-w-screen-xl mx-auto">
+    <!-- header -->
+    <header class="flex items-center justify-between py-2 border-b">
+      <a href="#" class="px-2 lg:px-0 font-bold text-purple-800">
+        0xAOI
       </a>
-      <a class="text-lg font-semibold hover:text-blue-100 pr-8" href="/contact">
-        Contact
-      </a>
-      <a class="text-lg font-semibold hover:text-blue-100 pr-8" href="/faq">
-        FAQ
-      </a>
-    </div>
-    <div class="space-x-4">
-      <a href="#">Sign in</a>
-      <a href="#" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded">
-        Sign up
-      </a>
-    </div>
-  </nav>
-</header>
+      <ul class="inline-flex items-center">
+        <li class="px-2 md:px-4">
+          <a href="/" class="text-purple-600 font-semibold hover:text-purple-500"> Home </a>
+        </li>
+        <li class="px-2 md:px-4">
+          <a href="/about" class="text-gray-500 font-semibold hover:text-purple-500"> About </a>
+        </li>
+      </ul>
+
+      </header>
+      <!-- header ends here -->
+
+      <main class="mt-10">
 {{end}}
 
 {{define "footer"}}
+      </main>
+        <!-- main ends here -->
+        <!-- footer -->
+        <footer class="border-t mt-32 pt-12 pb-32 px-4 lg:px-0">
+          <div class="flex">
+
+            <div class="w-full md:w-1/3 lg:w-1/4">
+              <h6 class="font-semibold text-gray-700 mb-4">Company</h6>
+              <ul>
+                <li> <a href="" class="block text-gray-600 py-2">Team</a> </li>
+                <li> <a href="" class="block text-gray-600 py-2">About us</a> </li>
+                <li> <a href="" class="block text-gray-600 py-2">Press</a> </li>
+              </ul>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4">
+              <h6 class="font-semibold text-gray-700 mb-4">Content</h6>
+              <ul>
+                <li> <a href="" class="block text-gray-600 py-2">Blog</a> </li>
+                <li> <a href="" class="block text-gray-600 py-2">Privacy Policy</a> </li>
+                <li> <a href="" class="block text-gray-600 py-2">Terms & Conditions</a> </li>
+                <li> <a href="" class="block text-gray-600 py-2">Documentation</a> </li>
+              </ul>
+            </div>
+
+          </div>
+        </footer>
+</div>
 </body>
 </html>
 {{end}}

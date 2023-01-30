@@ -3,8 +3,10 @@ package controllers
 import (
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/Aoi1011/blog/views"
+	"github.com/gomarkdown/markdown"
 )
 
 type Static struct {
@@ -41,5 +43,48 @@ func FAQ(tpl views.Template) http.HandlerFunc {
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		tpl.Execute(w, questions)
+	}
+}
+
+func readMarkdown() []byte {
+	// files, err := ioutil.ReadDir("/posts/")
+	// if err != nil {
+	// 	fmt.Fprintf(w, "unable to open in posts dir: %v", err)
+	// 	return
+	// }
+
+	// for _, file := range files {
+	// 	if file.Name() == "ethereum-basics.md" {
+
+	// 	}
+	// }
+	content, err := os.ReadFile("/home/aoi/dev/minor/blog/posts/ethereum-basics.md")
+	if err != nil {
+		return []byte("Unable to open")
+	}
+
+	// defer file.Close()
+
+	// scanner := bufio.NewScanner(file)
+	// contents := ""
+
+	// for scanner.Scan() {
+	// 	content := scanner.Text()
+	// 	contents = contents + content
+
+	// }
+
+	md := []byte(content)
+	output := markdown.ToHTML(md, nil, nil)
+	return output
+}
+
+func Blog(tpl views.Template) http.HandlerFunc {
+	output := readMarkdown()
+
+	content := struct{ Content string }{Content: string(output)}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		tpl.Execute(w, content)
 	}
 }
