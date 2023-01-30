@@ -2,6 +2,7 @@ package views
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"text/template"
@@ -21,10 +22,9 @@ func (t Template) Execute(w http.ResponseWriter, data interface{}) {
 	}
 }
 
-func Parse(filepath string) (Template, error) {
-	tpl, err := template.ParseFiles(filepath)
+func ParseFS(fs fs.FS, pattern ...string) (Template, error) {
+	tpl, err := template.ParseFS(fs, pattern...)
 	if err != nil {
-		log.Printf("parsing template: %v", err)
 		return Template{}, fmt.Errorf("parsing template: %w", err)
 
 	}

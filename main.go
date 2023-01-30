@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/Aoi1011/blog/controllers"
+	"github.com/Aoi1011/blog/templates"
 	"github.com/Aoi1011/blog/views"
 
 	"github.com/go-chi/chi/v5"
@@ -52,13 +52,14 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := chi.NewRouter()
 
-	homeTpl := views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))
+	r.Get("/", controllers.StaticHandler(views.Must(
+		views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))))
 
-	r.Get("/", controllers.StaticHandler(homeTpl))
+	r.Get("/contact", controllers.StaticHandler(views.Must(
+		views.ParseFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))))
 
-	r.Get("/contact", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
-
-	r.Get("/faq", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+	r.Get("/faq", controllers.FAQ(views.Must(
+		views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
