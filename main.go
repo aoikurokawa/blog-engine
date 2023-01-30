@@ -20,7 +20,7 @@ func main() {
 	r.Get("/{post}", controllers.Blog(views.Must(
 		views.ParseFS(templates.FS, "blog.gohtml", "tailwind.gohtml"))))
 
-	r.Get("/contact", controllers.StaticHandler(views.Must(
+	r.Get("/about", controllers.StaticHandler(views.Must(
 		views.ParseFS(templates.FS, "about.gohtml", "tailwind.gohtml"))))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
