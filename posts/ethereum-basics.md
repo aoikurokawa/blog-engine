@@ -1,4 +1,4 @@
-# Ethereum Basics
+# What is Ethereum?
 
 ## Components that the Ethereum system is comprised of
 
