@@ -1,4 +1,25 @@
-# What is Ethereum?
+# Ethereum Basics
+
+## Introduction
+Goal of the Ethereum project
+
+> Ethereum wants to create a new decentralized computer, where anyone would be able to be part of it and use it. 
+
+---
+
+## The Blockchain Paradigm
+
+> Ethereum [...] can be viewed as a transaction-based state machine.
+
+nodes perform calculations (process) using transactions (inputs), string the results (storage) that can be queried later (output).
+
+---
+
+## Expanding the model
+In Ethereum, transactions are aggregated in blocks.
+
+A node mines a block, the transactions on that block are applied (in sequence) on the world state, modifying it. 
+
 
 ## Components that the Ethereum system is comprised of
 
