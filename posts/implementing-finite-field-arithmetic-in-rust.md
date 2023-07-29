@@ -40,7 +40,7 @@ Basic Properties of Finite Fields:
 
 1. Closure: The result of addition and multiplication of any two elements in the finite field also belongs to the finite field. In other words, finite fields are closed under addition and multiplication.
 
-ex:) If a and b are in the set, a + b and a * b are in the set.
+> ex:) If a and b are in the set, a + b and a * b are in the set.
 
 2. Addition: Finite fields form an Abelian group under addition. This means that addition is commutative (a + b = b + a), associative (a + (b + c) = (a + b) + c), and has an identity element (0) such that a + 0 = a for any element a in the field. Additionally, every element has an additive inverse (−a) such that a + (−a) = 0.
 
