@@ -5,6 +5,8 @@ use actix_web::{dev::Server, middleware, web, App, HttpResponse, HttpServer};
 use lazy_static::lazy_static;
 use tera::Tera;
 
+pub mod handlers;
+
 lazy_static! {
     pub static ref TEMPLATES: Tera = {
         let mut tera = match Tera::new("templates/**/*.html") {
