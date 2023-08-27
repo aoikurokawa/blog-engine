@@ -1,5 +1,6 @@
 use std::net::TcpListener;
 
+use actix_files::Files;
 use actix_web::{dev::Server, middleware, web, App, HttpResponse, HttpServer};
 use lazy_static::lazy_static;
 use tera::Tera;
@@ -23,7 +24,9 @@ pub fn start_blog(listener: TcpListener) -> Result<Server, std::io::Error> {
         App::new()
             .app_data(web::Data::new(TEMPLATES.clone()))
             .wrap(middleware::Logger::default())
+            .service(Files::new("/static", "static/").use_last_modified(true))
             .route("/health", web::get().to(HttpResponse::Ok))
+            .service(handlers::index)
     })
     .listen(listener)?
     .run();
