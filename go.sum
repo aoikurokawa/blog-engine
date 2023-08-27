@@ -1,6 +1,0 @@
-github.com/go-chi/chi/v5 v5.0.8 h1:lD+NLqFcAi1ovnVZpsnObHGW4xb4J8lNmoYVfECH1Y0=
-github.com/go-chi/chi/v5 v5.0.8/go.mod h1:DslCQbL2OYiznFReuXYUmQ2hGd1aDpCnlMNITLSKoi8=
-github.com/gomarkdown/markdown v0.0.0-20221013030248-663e2500819c h1:iyaGYbCmcYK0Ja9a3OUa2Fo+EaN0cbLu0eKpBwPFzc8=
-github.com/gomarkdown/markdown v0.0.0-20221013030248-663e2500819c/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
-github.com/gomarkdown/mdtohtml v0.0.0-20220720154245-d5126442bcee h1:K0HD10xVzFVXIvi//7xipQpvis/iIBShyjvkD43gs7E=
-github.com/gomarkdown/mdtohtml v0.0.0-20220720154245-d5126442bcee/go.mod h1:yQkMXrQ+Kf0W5KUNz8xIh1x14C3Hiyw/2j/zcUaDrwA=
