@@ -1,4 +1,7 @@
+use std::{fs, io::Error};
+
 use actix_web::{get, web, HttpResponse, Responder};
+use ignore::WalkBuilder;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -15,28 +18,68 @@ pub struct Frontmatter {
 
 #[get("/")]
 pub async fn index(templates: web::Data<tera::Tera>) -> impl Responder {
-   let mut context = tera::Context::new();
-   
-   let frontmatters = vec![Frontmatter{
-	tags: vec!["Rusty".to_string(), "Test".to_string()],
-	title: "Test posts".to_string(),
-	file_name: "test_posts.md".to_string(),
-	description: "Just testing out the system".to_string(),
-	posted: "2022-08-09".to_string(),
-	author: "MBvisti".to_string(),
-	estimated_reading_time: 12,
-	order: 1,
-   }];
-   
-   context.insert("posts", &frontmatters);
-   
-   match templates.render("home.html", &context) {
-	Ok(s) => HttpResponse::Ok().content_type("text/html").body(s),
-	Err(e) => {
-		println!("{:?}", e);
-		HttpResponse::InternalServerError()
-			.content_type("text/html")
-			.body("<p>Something went wrong!</p>")
-	}
-   }
+    let mut context = tera::Context::new();
+
+    let mut frontmatters = match find_all_frontmatters() {
+        Ok(fm) => fm,
+        Err(e) => {
+            println!("{:?}", e);
+            return HttpResponse::InternalServerError()
+                .content_type("text/html")
+                .body("<p>Something went wrong!</p>");
+        }
+    };
+    frontmatters.sort_by(|a, b| b.order.cmp(&a.order));
+
+    context.insert("posts", &frontmatters);
+
+    match templates.render("home.html", &context) {
+        Ok(s) => HttpResponse::Ok().content_type("text/html").body(s),
+        Err(e) => {
+            println!("{:?}", e);
+            HttpResponse::InternalServerError()
+                .content_type("text/html")
+                .body("<p>Something went wrong!</p>")
+        }
+    }
+}
+
+fn find_all_frontmatters() -> Result<Vec<Frontmatter>, Error> {
+    let mut t = ignore::types::TypesBuilder::new();
+    t.add_defaults();
+    let toml = match t.select("toml").build() {
+        Ok(t) => t,
+        Err(e) => {
+            println!("{:}", e);
+            return Err(Error::new(
+                std::io::ErrorKind::Other,
+                "could not build toml file type matcher",
+            ));
+        }
+    };
+
+    let file_walker = WalkBuilder::new("./posts").types(toml).build();
+
+    let mut frontmatters = Vec::new();
+    for frontmatter in file_walker {
+        match frontmatter {
+            Ok(fm) => {
+                if fm.path().is_file() {
+                    let fm_content = fs::read_to_string(fm.path())?;
+                    let frontmatter: Frontmatter = toml::from_str(&fm_content).unwrap();
+
+                    frontmatters.push(frontmatter);
+                }
+            }
+            Err(e) => {
+                println!("{:}", e); // we're just going to print the error for now
+                return Err(Error::new(
+                    std::io::ErrorKind::NotFound,
+                    "could not locate frontmatter",
+                ));
+            }
+        }
+    }
+
+    Ok(frontmatters)
 }
