@@ -1,5 +1,6 @@
 use std::net::TcpListener;
 
+use blog::start_blog;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -10,5 +11,3 @@ async fn main() -> std::io::Result<()> {
     start_blog(listener)?.await?;
     Ok(())
 }
-
-
