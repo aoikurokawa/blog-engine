@@ -8,10 +8,12 @@ My personal blog
 
 ### 1. Run the app
 ```bash
-$ go run main.go
+$ cargo r
 ```
 
-### 2. Open [localhost](http.localhost:3000/)
+### 2. Open localhost
+
+[localhost](http://localhost:3000/)
 
 ## Useful sites
 - https://markdown-videos.jorgenkh.no/
