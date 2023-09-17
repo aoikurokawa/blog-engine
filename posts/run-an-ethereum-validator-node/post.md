@@ -1,10 +1,9 @@
 # Run an ethereum validator node
 
 ## Introduction
+Since [the merge](https://ethereum.org/en/roadmap/merge/), Ethereum transitioned from Proof of Work to Proof of Stake consensus algorithm. Recently, one testnet called Holesky should be launched at Sep, 15th but unfortunately it [failed](https://twitter.com/protolambda/status/1702691543629328474). So instead I will introduce how to run a validator on Goerli testnet step by step. Let's get started!  
 
-## Requeirement
-
-## Specs
+## Pre-requisites
 
 ### Home Staker
 
@@ -16,6 +15,7 @@
 - Power: Uninterruptible power supply
 
 ### Digital Ocean Equivalent (cloud provider)
+
 DigitalOcean Droplets are Linux-based virtual machines (VMs) that run on top of virtualized hardware. Each Droplet you create is a new server you can use, either standalone or as part of a larger, cloud-based infrastructure. 
 
 - Operating System: 64-bit Linux, Mac OS X, Windows
@@ -32,8 +32,16 @@ Once the terminal is open, enter the following SSH command. Substitute in your D
 
 ```bash
 
-ssh root@203.0.113.0
+ssh root@ip address
 
+```
+
+## Become a validator
+
+### Download staking-deposit-cli
+
+```bash
+wget -c https://github.com/ethereum/staking-deposit-cli/releases/download/v2.6.0/staking_deposit-cli-33cdafe-linux-amd64.tar.gz -O - | tar -xz
 ```
 
 ## Execution client
