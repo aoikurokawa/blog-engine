@@ -54,3 +54,5 @@ wget -c https://github.com/ethereum/staking-deposit-cli/releases/download/v2.6.0
 
 ## References
 - https://goerli.launchpad.ethstaker.cc/en/
+- https://eth-clients.github.io/checkpoint-sync-endpoints/#goerli
+- https://ethereum.org/en/developers/docs/networks/
