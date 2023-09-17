@@ -1,5 +1,7 @@
 # Run an ethereum validator node
 
+## Introduction
+
 ## Requeirement
 
 ## Specs
@@ -41,3 +43,6 @@ ssh root@203.0.113.0
 
 ## Consensus client
 - Lighthouse
+
+## References
+- https://goerli.launchpad.ethstaker.cc/en/
