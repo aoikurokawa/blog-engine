@@ -16,7 +16,7 @@
 
 ### Ethereum Testnets
 
-  Beyond Mainnet, public testnets exist. These networks are utilized by both protocol and smart contract developers to trial protocol changes and potential smart contracts in an environment similar to Mainnet prior to actual deployment. This can be likened to the distinction between production and staging servers. Historically, many testnets employed a permissioned proof-of-authority consensus method. In this setup, a select group of nodes are tasked with validating transactions and producing new blocks, effectively pledging their identity. On the other hand, some testnets use an open proof-of-stake consensus system, allowing anyone to experiment with validator operations, mirroring the Ethereum Mainnet approach.
+  Beyond Mainnet, public testnets exist. These networks are utilized by both protocol and smart contract developers to trial protocol changes and potential smart contracts in an environment similar to Mainnet prior to actual deployment. This can be likened to the distinction between production and staging servers. Historically, many testnets employed a permissioned [proof-of-authority](https://en.wikipedia.org/wiki/Proof_of_authority) consensus method. In this setup, a select group of nodes are tasked with validating transactions and producing new blocks, effectively pledging their identity. On the other hand, some testnets use an open proof-of-stake consensus system, allowing anyone to experiment with validator operations, mirroring the Ethereum Mainnet approach.
 
   Currently, there are two public testnets that client developers are currently maintaining.
 
@@ -29,7 +29,7 @@
 
   [Goerli](https://goerli.net/) is testnet for testing validating and staking. The Goerli network is open for users wanting to run a testnet validator. Stakers wanting to test protocol upgrades before they are deployed to mainnet should therefore use Goerli. However, the Goerli testnet is deprecated and will be replaced by [Holesovice](https://github.com/eth-clients/holesky) soon.
   
-  Recently, Holesovice should be attempted to launch at Sep, 15th but unfortunately it [failed](https://twitter.com/protolambda/status/1702691543629328474). 
+  Recently, Holesovice should be attempted to launch at Sep 15th but unfortunately it [failed](https://twitter.com/protolambda/status/1702691543629328474). You can check it [this blog](https://www.coindesk.com/tech/2023/09/17/ethereums-holesky-testnet-fails-to-launch-in-rare-tech-misstep-for-the-blockchain/) for more detail.
 
 
 So in this blog, I will introduce how to run a validator on Goerli testnet step by step. Let's get started!  
@@ -37,22 +37,22 @@ So in this blog, I will introduce how to run a validator on Goerli testnet step 
 
 ## Pre-requisites
 
-To run an ETH 2.0  node one needs:
+To run an ETH 2.0 node one needs:
 
 - **Validator client**
 Responsible for producing new blocks and attestations in the beacon chain and shard chains
-In this time, I will use [Lighthouse]([https://github.com/paradigmxyz/reth](https://github.com/sigp/lighthouse/tree/stable)).
+In this time, I will use [Lighthouse](https://github.com/sigp/lighthouse/tree/stable).
 
 - **Beacon chain client**
 Responsible for managing the state of the beacon chain, validator shuffling, and more.
 
-- ETH 1 node
-RethSupplies incoming validator deposits from the eth1 chain to the beacon chain client.
+- ETH 1 node (execution client)
+Reth supplies incoming validator deposits from the eth1 chain to the beacon chain client.
 In this time, I will use [Reth](https://github.com/paradigmxyz/reth).
 
 
 - ETH balance
-Goerli ETH and some ETH for deposit transaction fees.
+Goerli ETH for deposit and transaction fees.
 
 
 - Wallet
@@ -87,7 +87,7 @@ You'll need to open a terminal.
 
 Once the terminal is open, enter the following SSH command. Substitute in your Droplet's IP address after the @.
 
-![Droplet](https://github.com/aoikurokawa/blog/assets/62386689/96884732-83d3-4753-ab3f-af4d5451bee6)
+![SSH connection to DigitalOcean Droplet](https://github.com/aoikurokawa/blog/assets/62386689/96884732-83d3-4753-ab3f-af4d5451bee6)
 
 
 ```bash
@@ -227,9 +227,20 @@ lighthouse vc --network goerli --suggested-fee-recipient YourFeeRecipientAddress
   After installing the wallet, you have to aquire some GOETH. so visit one of these faucet website. 
 
 - [QuickNode Goerli Faucet](https://faucet.quicknode.com/drip)
-- []()
 
-Visit [this website,](https://goerli.launchpad.ethereum.org/en/) then deposit GOETH to become a validator.
+  If you receive some GOETH, visit [this website](https://goerli.launchpad.ethereum.org/en/), then deposit GOETH to become a validator.
+
+  When you finish submitting transaction to deposit contract successfully, you are one of validator. Congratulations!!
+
+
+  ## Conclusion
+  In the ever-evolving landscape of Ethereum, understanding and participating in the consensus mechanisms is crucial. We've taken a deep dive into how one can set up an Ethereum validator node, particularly on the Goerli testnet. Not only does this equip you with hands-on experience in the Ethereum ecosystem, but it also provides invaluable insights into the workings of Proof-of-Stake.
+
+  Whether you're a developer, an Ethereum enthusiast, or just curious about blockchain technology, taking these steps towards running a validator node is a significant leap. While the Goerli testnet provides a safe environment for experimentation, the skills and knowledge acquired are directly transferable to the Mainnet.
+
+  As the blockchain community continues to grow and innovate, staying informed and hands-on is the best way to be a part of this revolution. If you've followed along and set up your node, I'd love to hear about your experience. If you encountered any challenges or have further questions, do drop them in the comments below. Together, we can learn, grow, and contribute to the decentralized future!
 
 
 ## References
+- [Guide: Becoming a Validator on the Eth2 Testnet](https://www.bankless.com/guide-becoming-a-validator-on-the)
+
