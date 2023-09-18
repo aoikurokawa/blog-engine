@@ -27,17 +27,39 @@
 
 #### Goerli
 
-  Goerli is testnet for testing validating and staking. The Goerli network is open for users wanting to run a testnet validator. Stakers wanting to test protocol upgrades before they are deployed to mainnet should therefore use Goerli. However, the Goerli testnet is deprecated and will be replaced by [Holesovice](https://github.com/eth-clients/holesky) soon.
+  [Goerli](https://goerli.net/) is testnet for testing validating and staking. The Goerli network is open for users wanting to run a testnet validator. Stakers wanting to test protocol upgrades before they are deployed to mainnet should therefore use Goerli. However, the Goerli testnet is deprecated and will be replaced by [Holesovice](https://github.com/eth-clients/holesky) soon.
   
   Recently, Holesovice should be attempted to launch at Sep, 15th but unfortunately it [failed](https://twitter.com/protolambda/status/1702691543629328474). 
 
 
 So in this blog, I will introduce how to run a validator on Goerli testnet step by step. Let's get started!  
 
+
 ## Pre-requisites
 
+To run an ETH 2.0  node one needs:
 
-### Home Staker
+- **Validator client**
+Responsible for producing new blocks and attestations in the beacon chain and shard chains
+In this time, I will use [Lighthouse]([https://github.com/paradigmxyz/reth](https://github.com/sigp/lighthouse/tree/stable)).
+
+- **Beacon chain client**
+Responsible for managing the state of the beacon chain, validator shuffling, and more.
+
+- ETH 1 node
+RethSupplies incoming validator deposits from the eth1 chain to the beacon chain client.
+In this time, I will use [Reth](https://github.com/paradigmxyz/reth).
+
+
+- ETH balance
+Goerli ETH and some ETH for deposit transaction fees.
+
+
+- Wallet
+[Metamask](https://metamask.io/) installed.
+
+
+### Machine Requirements
 
 - Operating System: 64-bit Linux, Mac OS X, Windows
 - Processor: Intel Core i7-4770 or AMD FX-8310
@@ -46,7 +68,7 @@ So in this blog, I will introduce how to run a validator on Goerli testnet step 
 - Internet: Broadband internet connection (10 Mbps)
 - Power: Uninterruptible power supply
 
-### Digital Ocean Equivalent (cloud provider)
+#### Digital Ocean Equivalent (cloud provider)
 
 DigitalOcean Droplets are Linux-based virtual machines (VMs) that run on top of virtualized hardware. Each Droplet you create is a new server you can use, either standalone or as part of a larger, cloud-based infrastructure. 
 
@@ -57,10 +79,16 @@ DigitalOcean Droplets are Linux-based virtual machines (VMs) that run on top of 
 - Internet: Broadband internet connection (10 Mbps)
 - Power: Uninterruptible power supply
 
-To connect to your Droplet, you'll need to open a terminal.
 
+## Run a node
 
-Once the terminal is open, enter the following SSH command. Substitute in your Droplet's IP address after the @
+### 1. Connect to Droplet
+You'll need to open a terminal.
+
+Once the terminal is open, enter the following SSH command. Substitute in your Droplet's IP address after the @.
+
+![Droplet](https://github.com/aoikurokawa/blog/assets/62386689/96884732-83d3-4753-ab3f-af4d5451bee6)
+
 
 ```bash
 
@@ -68,21 +96,141 @@ ssh root@ip address
 
 ```
 
-## Become a validator
+### 2. Install Dependencies
+First, install Rust using [rustup](https://rustup.rs/):
 
-### Download staking-deposit-cli
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+After Rust installation completes, try running to check whether rust installed successfully
+
+```bash
+cargo --verison
+
+# return cargo 1.68.2
+```
+
+With Rust installed, install following dependencies relevant to your operating system:
+
+**For Reth:**
+
+```bash
+apt-get install libclang-dev pkg-config build-essential
+```
+
+**For Lighthouse**
+
+```bash
+apt install -y git gcc g++ make cmake pkg-config llvm-dev libclang-dev clang
+```
+   
+### 3. Build Reth
+Visit [reth github](https://github.com/paradigmxyz/reth), then clone it. 
+
+```bash
+git clone https://github.com/paradigmxyz/reth
+
+cd reth
+```
+
+Build Reth!!
+
+```bash
+cargo build --release
+```
+
+Compilation may take around 10 ~ 15 min. Installation was successful if `reth --help` displays the [command-line documentation](https://paradigmxyz.github.io/reth/cli/cli.html). 
+
+
+### 4. Build Lighthouse
+Visit [lighthouse github](https://github.com/sigp/lighthouse), then clone it.
+
+```bash
+git clone https://github.com/sigp/lighthouse.git
+
+cd lighthouse
+```
+
+Build lighthouse!!
+
+```bash
+git checkout stable
+
+make
+```
+
+### 5. Create a JWT secret file
+A JWT secret file is used to secure the communication between the execution client and the consensus client. In this step, we will create a JWT secret file which will be used in later steps.
+
+```bash
+sudo mkdir -p /secrets
+openssl rand -hex 32 | tr -d "\n" | sudo tee /secrets/jwt.hex
+```
+
+
+### 6. Running the Reth Node
+Run this following command to run Reth node. 
+
+```bash
+RUST_LOG=info reth node \
+    --authrpc.jwtsecret /secrets/jwt.hex \
+    --authrpc.addr 127.0.0.1 \
+    --authrpc.port 8551 \
+    --chain goerli
+```
+
+
+### 7. Set up a beacon node using Lighthouse
+In this step, we will set up a beacon node. Use the following command to start a beacon node that connects to the execution node.
+
+
+```bash
+lighthouse bn \
+  --network goerli \
+  --execution-endpoint http://localhost:8551 \
+  --execution-jwt /secrets/jwt.hex \
+  --checkpoint-sync-url https://sync-goerli.beaconcha.in/ \
+  --http
+```
+
+### 8. Download staking-deposit-cli to create validator keys
+The Etereum Foundation procides the staking-deposit-cli for creating validator keys. Download and run the staking-deposit-cli with the command:
 
 ```bash
 wget -c https://github.com/ethereum/staking-deposit-cli/releases/download/v2.6.0/staking_deposit-cli-33cdafe-linux-amd64.tar.gz -O - | tar -xz
+
+cd taking_deposit-cli-33cdafe-linux-amd64
+
+./deposit new-mnemonic
 ```
 
-## Execution client
-- Reth
-- https://paradigmxyz.github.io/reth/installation/source.html
+### 9. Import validator keys to Lighthouse
+Run the following command to import validator keys.
+
+```bash
+lighthouse --network goerli account validator import --directory $HOME/staking_deposit-cli-33cdafe-linux-amd64/validator_keys
+```
 
 
-## Consensus client
-- Lighthouse
+### 10. Start Lighthouse validator client
+After the keys are imported, the user can start performing their validator duties by starting the Lighthouse validator client.
+
+```bash
+lighthouse vc --network goerli --suggested-fee-recipient YourFeeRecipientAddress
+```
+
+### 11. Get some GöETH to submit deposit
+  
+  If you have not installed [metamask](https://metamask.io/), or other wallet, you need to install it first. 
+
+  After installing the wallet, you have to aquire some GOETH. so visit one of these faucet website. 
+
+- [QuickNode Goerli Faucet](https://faucet.quicknode.com/drip)
+- []()
+
+Visit [this website,](https://goerli.launchpad.ethereum.org/en/) then deposit GOETH to become a validator.
+
 
 ## References
 - https://goerli.launchpad.ethstaker.cc/en/
