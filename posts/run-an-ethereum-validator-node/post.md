@@ -233,6 +233,3 @@ Visit [this website,](https://goerli.launchpad.ethereum.org/en/) then deposit GO
 
 
 ## References
-- https://goerli.launchpad.ethstaker.cc/en/
-- https://eth-clients.github.io/checkpoint-sync-endpoints/#goerli
-- https://ethereum.org/en/developers/docs/networks/
