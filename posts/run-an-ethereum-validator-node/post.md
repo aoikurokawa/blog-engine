@@ -233,13 +233,18 @@ lighthouse vc --network goerli --suggested-fee-recipient YourFeeRecipientAddress
   When you finish submitting transaction to deposit contract successfully, you are one of validator. Congratulations!!
 
 
-  ## Conclusion
+## Conclusion
   In the ever-evolving landscape of Ethereum, understanding and participating in the consensus mechanisms is crucial. We've taken a deep dive into how one can set up an Ethereum validator node, particularly on the Goerli testnet. Not only does this equip you with hands-on experience in the Ethereum ecosystem, but it also provides invaluable insights into the workings of Proof-of-Stake.
 
   Whether you're a developer, an Ethereum enthusiast, or just curious about blockchain technology, taking these steps towards running a validator node is a significant leap. While the Goerli testnet provides a safe environment for experimentation, the skills and knowledge acquired are directly transferable to the Mainnet.
 
   As the blockchain community continues to grow and innovate, staying informed and hands-on is the best way to be a part of this revolution. If you've followed along and set up your node, I'd love to hear about your experience. If you encountered any challenges or have further questions, do drop them in the comments below. Together, we can learn, grow, and contribute to the decentralized future!
 
+## Tips
+### AWS
+- [How do I increase the size of my EBS volume if I receive an error that there's no space left on my file system?](https://repost.aws/knowledge-center/ebs-volume-size-increase)
+- https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
+- https://stackoverflow.com/questions/59420015/unable-to-growpart-because-no-space-left
 
 ## References
 - [Guide: Becoming a Validator on the Eth2 Testnet](https://www.bankless.com/guide-becoming-a-validator-on-the)
