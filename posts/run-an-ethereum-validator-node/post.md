@@ -247,5 +247,9 @@ lighthouse vc --network goerli --suggested-fee-recipient YourFeeRecipientAddress
 - https://stackoverflow.com/questions/59420015/unable-to-growpart-because-no-space-left
 
 ## References
+- [Holesky testnet](https://holesky.ethpandaops.io/)
+- [Holesky specification github](https://github.com/eth-clients/holesky)
 - [Guide: Becoming a Validator on the Eth2 Testnet](https://www.bankless.com/guide-becoming-a-validator-on-the)
+- [Thirdweb](https://thirdweb.com/holesky)
+- 
 
