@@ -1,9 +1,8 @@
-use std::net::TcpListener;
-
 use actix_files::Files;
-use actix_web::{dev::Server, middleware, web, App, HttpServer};
+use hyper_util::rt::TokioIo;
 use lazy_static::lazy_static;
 use tera::Tera;
+use tokio::net::TcpListener;
 
 use crate::{handlers, routes::health_check};
 
@@ -21,7 +20,7 @@ lazy_static! {
     };
 }
 
-pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+pub async fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let srv = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(TEMPLATES.clone()))
@@ -33,6 +32,8 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     })
     .listen(listener)?
     .run();
+
+    let server = warp::serve(filter);
 
     Ok(srv)
 }

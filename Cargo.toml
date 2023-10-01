@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 tera = "1.19.0"
-actix-web = "4.3.1"
+warp = "0.3.6"
 env_logger = "0.10.0"
 lazy_static = "1.4.0"
 actix-files = "0.6.2"
@@ -17,4 +17,6 @@ toml = "0.7.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.105"
 markdown = "1.0.0-alpha.12"
-
+tokio = { version = "1", features = ["sync"] }
+http-body-util = "0.1.0-rc.3"
+hyper-util = { git = "https://github.com/hyperium/hyper-util.git" }
