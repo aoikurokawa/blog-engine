@@ -8,7 +8,6 @@ use warp::Filter;
 #[tokio::main]
 async fn main() {
     let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,warp=debug".to_owned());
-    // env_logger::init();
 
     tracing_subscriber::fmt()
         .with_env_filter(filter)
