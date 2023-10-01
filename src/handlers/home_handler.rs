@@ -2,7 +2,7 @@ use std::{fs, io::Error};
 
 use ignore::WalkBuilder;
 use serde::{Deserialize, Serialize};
-use warp::{Rejection, Reply};
+use warp::Rejection;
 
 use crate::startup::TEMPLATES;
 
@@ -25,16 +25,12 @@ pub async fn index() -> Result<warp::http::Response<String>, Rejection> {
         Ok(fm) => fm,
         Err(e) => {
             println!("{:?}", e);
-            let response = warp::http::Response::builder()
+            let err_response = warp::http::Response::builder()
                 .status(warp::http::StatusCode::NOT_FOUND)
                 .header("content-type", "text/html")
                 .body(String::from("<p>Could not find post - sorry!</p>"))
                 .unwrap();
-            return Ok(response);
-            // return Ok(warp::reply::with_status(
-            //     warp::reply::html("<p>Something went wrong!</p>"),
-            //     warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            // ));
+            return Ok(err_response);
         }
     };
     frontmatters.sort_by(|a, b| b.order.cmp(&a.order));
@@ -46,26 +42,18 @@ pub async fn index() -> Result<warp::http::Response<String>, Rejection> {
             let response = warp::http::Response::builder()
                 .status(warp::http::StatusCode::OK)
                 .header("content-type", "text/html")
-                .body(s.into())
+                .body(s)
                 .unwrap();
             Ok(response)
-            // return Ok(warp::reply::with_status(
-            //     warp::reply::html(&s),
-            //     warp::http::StatusCode::OK,
-            // ));
         }
         Err(e) => {
             println!("{:?}", e);
-            let response = warp::http::Response::builder()
+            let err_response = warp::http::Response::builder()
                 .status(warp::http::StatusCode::NOT_FOUND)
                 .header("content-type", "text/html")
                 .body(String::from("<p>Could not find post - sorry!</p>"))
                 .unwrap();
-            Ok(response)
-            // return Ok(warp::reply::with_status(
-            //     warp::reply::html("<p>Something went wrong!</p>"),
-            //     warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            // ));
+            Ok(err_response)
         }
     }
 }

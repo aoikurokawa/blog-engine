@@ -1,13 +1,13 @@
 use std::{fs, io::Error};
 
 use pulldown_cmark::{html, Options, Parser};
-use warp::{Rejection, Reply};
+use warp::Rejection;
 
 use crate::startup::TEMPLATES;
 
 use super::home_handler::Frontmatter;
 
-pub async fn post(post_name: String) -> Result<impl Reply, Rejection> {
+pub async fn post(post_name: String) -> Result<warp::http::Response<String>, Rejection> {
     let mut context = tera::Context::new();
     let mut options = Options::empty(); // used as part of pulldown_cmark for setting flags to enable extra features - we're not going to use any of those, hence the `empty();`
     options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
@@ -16,10 +16,12 @@ pub async fn post(post_name: String) -> Result<impl Reply, Rejection> {
         Ok(s) => s,
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::html("<p>Could not find post - sorry!</p>"),
-                warp::http::StatusCode::NOT_FOUND,
-            ));
+            let err_response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::NOT_FOUND)
+                .header("content-type", "text/html")
+                .body(String::from("<p>Could not find post - sorry!</p>"))
+                .unwrap();
+            return Ok(err_response);
         }
     };
 
@@ -27,10 +29,12 @@ pub async fn post(post_name: String) -> Result<impl Reply, Rejection> {
         Ok(s) => s,
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::html("<p>Could not find post - sorry!</p>"),
-                warp::http::StatusCode::NOT_FOUND,
-            ));
+            let err_response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::NOT_FOUND)
+                .header("content-type", "text/html")
+                .body(String::from("<p>Could not find post - sorry!</p>"))
+                .unwrap();
+            return Ok(err_response);
         }
     };
 
@@ -43,16 +47,22 @@ pub async fn post(post_name: String) -> Result<impl Reply, Rejection> {
     context.insert("meta_data", &frontmatter);
 
     match TEMPLATES.render("post.html", &context) {
-        Ok(_s) => Ok(warp::reply::with_status(
-            warp::reply::html("<p>Hello</p>"),
-            warp::http::StatusCode::NOT_FOUND,
-        )),
+        Ok(s) => {
+            let response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::OK)
+                .header("content-type", "text/html")
+                .body(s)
+                .unwrap();
+            Ok(response)
+        }
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::html("<p>Could not find post - sorry!</p>"),
-                warp::http::StatusCode::NOT_FOUND,
-            ));
+            let err_response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::NOT_FOUND)
+                .header("content-type", "text/html")
+                .body(String::from("<p>Could not find post - sorry!</p>"))
+                .unwrap();
+            Ok(err_response)
         }
     }
 }
