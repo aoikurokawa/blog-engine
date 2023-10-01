@@ -1,13 +1,15 @@
 use std::net::SocketAddr;
 
 use blog::handlers;
-use warp::Filter;
 use tokio;
+use warp::Filter;
 
 #[tokio::main]
 async fn main() {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
+
+    let static_files = warp::path("static").and(warp::fs::dir("static/"));
 
     let health_check = warp::path!("health_check").map(|| warp::reply::html("OK"));
 
@@ -18,7 +20,10 @@ async fn main() {
         .and(warp::get())
         .and_then(handlers::post);
 
-    let routes = health_check.or(index).or(post).or(warp::fs::dir("static/"));
+    let routes = static_files
+        .or(health_check)
+        .or(index)
+        .or(post);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     warp::serve(routes).run(addr).await;

@@ -18,17 +18,23 @@ pub struct Frontmatter {
     order: u32,
 }
 
-pub async fn index() -> Result<impl Reply, Rejection> {
+pub async fn index() -> Result<warp::http::Response<String>, Rejection> {
     let mut context = tera::Context::new();
 
     let mut frontmatters = match find_all_frontmatters() {
         Ok(fm) => fm,
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::html("<p>Something went wrong!</p>"),
-                warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            ));
+            let response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::NOT_FOUND)
+                .header("content-type", "text/html")
+                .body(String::from("<p>Could not find post - sorry!</p>"))
+                .unwrap();
+            return Ok(response);
+            // return Ok(warp::reply::with_status(
+            //     warp::reply::html("<p>Something went wrong!</p>"),
+            //     warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+            // ));
         }
     };
     frontmatters.sort_by(|a, b| b.order.cmp(&a.order));
@@ -36,16 +42,30 @@ pub async fn index() -> Result<impl Reply, Rejection> {
     context.insert("posts", &frontmatters);
 
     match TEMPLATES.render("home.html", &context) {
-        Ok(_s) => Ok(warp::reply::with_status(
-            warp::reply::html("Hello"),
-            warp::http::StatusCode::OK,
-        )),
+        Ok(s) => {
+            let response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::OK)
+                .header("content-type", "text/html")
+                .body(s.into())
+                .unwrap();
+            Ok(response)
+            // return Ok(warp::reply::with_status(
+            //     warp::reply::html(&s),
+            //     warp::http::StatusCode::OK,
+            // ));
+        }
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::html("<p>Something went wrong!</p>"),
-                warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            ));
+            let response = warp::http::Response::builder()
+                .status(warp::http::StatusCode::NOT_FOUND)
+                .header("content-type", "text/html")
+                .body(String::from("<p>Could not find post - sorry!</p>"))
+                .unwrap();
+            Ok(response)
+            // return Ok(warp::reply::with_status(
+            //     warp::reply::html("<p>Something went wrong!</p>"),
+            //     warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+            // ));
         }
     }
 }
