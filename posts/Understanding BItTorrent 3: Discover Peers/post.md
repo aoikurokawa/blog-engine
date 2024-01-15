@@ -156,3 +156,4 @@ To serialize and deserialize bytes, we will use same method that I introduced [b
 
 ## Resources
 - [The BitTorrent Protocol Specification](https://www.bittorrent.org/beps/bep_0003.html)
+- [Building a BitTorrent client from the ground up in Go](https://blog.jse.li/posts/torrent/)
