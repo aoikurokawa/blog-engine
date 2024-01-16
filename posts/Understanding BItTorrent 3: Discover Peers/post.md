@@ -1,8 +1,19 @@
-# Introduction 
+## Introduction to BitTorrent Tracker Interaction with Rust
 
-BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols. In the [last blog](https://www.nxted.co.jp/hp/blog/blog_detail?id=49), I wrote about parsing torrent file. Through parsing torrent file, we could get some information such as `tracker_url`, `info_hash`, `piece_length` and `piece_hashes`. In this time, we will try to interact with the tracker to get peer's information. Let's get started!
+Welcome back to our exploration of the BitTorrent protocol! In [our previous blog](https://www.nxted.co.jp/hp/blog/blog_detail?id=49), we delved into the intricacies of parsing torrent files, uncovering valuable information like tracker_url, info_hash, piece_length, and piece_hashes. This knowledge laid the groundwork for understanding the fundamental components of BitTorrent's architecture. Today, we're taking a significant leap forward by focusing on a crucial aspect of the BitTorrent ecosystem - interacting with a tracker.
 
-# Define `TrackerRequest`
+### Why Trackers Matter
+
+In the world of BitTorrent, trackers play a pivotal role. They act as the orchestrators in the peer-to-peer network, guiding peers towards each other, thus facilitating the actual file sharing. Without this interaction, locating peers who have the files you need or to whom you can upload parts you already have would be akin to finding a needle in a haystack. The tracker's ability to efficiently manage peer connections is what makes BitTorrent an effective and widely used file-sharing protocol.
+
+### The Technical Journey Ahead
+
+In this post, we're going to simulate the role of a BitTorrent client. Our journey involves crafting a TrackerRequest to communicate with a tracker. We'll break down the components of this request, understanding each element's purpose and how they collectively contribute to successful peer discovery. This is not just about sending a request but about establishing a two-way communication that is fundamental to the BitTorrent file transfer process.
+
+We'll also be decoding the TrackerResponse, which is crucial for our client to understand who and where to connect in the vast sea of peers. This step is essential in the life cycle of a BitTorrent client as it transitions from a lone entity to a connected part of a broader network of file sharing.
+
+
+## Define `TrackerRequest`
 
 In order to interact with a tracker, we need to send a request first. So, first of all, we need to define a struct `TrackerRequest`. From the [spec](https://www.bittorrent.org/beps/bep_0003.html), we specify some inforamtion like `peer_id`, `ip` address and `port`.
 
@@ -74,7 +85,7 @@ pub fn urlencode(t: &[u8; 20]) -> String {
 
 ## Define `TrackerResponse`
 
-Once we send a request to the tracker, the tracker will send a response. So we need to define the sturct of it. 
+Once we send a request to the tracker, the tracker will response. So we need to define the sturct of it. 
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -153,6 +164,93 @@ To serialize and deserialize bytes, we will use same method that I introduced [b
         }
     }
 ```
+
+## Let's send a request
+
+In the `main.rs`, we will make new command for discovering peers. 
+
+```rust
+#[derive(Subcommand)]
+enum Commands {
+    Peers {
+        torrent: PathBuf,
+    },
+}
+```
+
+To send a request to the tracker, we will use [reqwest](https://docs.rs/reqwest/latest/reqwest/) crate. 
+
+```rust
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let args = Args::parse();
+
+    match args.command {
+        Commands::Peers { torrent } => {
+            let dot_torrent = std::fs::read(torrent).context("read torrent file")?;
+            let t: Torrent =
+                serde_bencode::from_bytes(&dot_torrent).context("parse torrent file")?;
+
+            let length = if let torrent::Keys::SingleFile { length } = t.info.keys {
+                length
+            } else {
+                todo!()
+            };
+
+            let info_hash = t.info_hash();
+
+            let request = TrackerRequest {
+                peer_id: String::from("00112233445566778899"),
+                port: 6881,
+                uploaded: 0,
+                downloaded: 0,
+                left: length,
+                compact: 1,
+            };
+            let url_params =
+                serde_urlencoded::to_string(request).context("url-encode tracker parameters")?;
+            let tracker_url = format!(
+                "{}?{}&info_hash={}",
+                t.announce,
+                url_params,
+                &urlencode(&info_hash)
+            );
+
+            let response = reqwest::get(tracker_url).await.context("query tracker")?;
+            let response = response.bytes().await.context("fetch tracker response")?;
+            let response: TrackerResponse =
+                serde_bencode::from_bytes(&response).context("parse tracker response")?;
+
+            for peer in response.peers.0 {
+                println!("{}:{}", peer.ip(), peer.port());
+            }
+        }
+    }
+
+    Ok(())
+}
+```
+
+When we hit the command below, we will get the info of peers. 
+
+```bash
+./build.sh peers sample.torrent
+
+# Output
+# 178.62.82.89:51470
+# 165.232.33.77:51467
+# 178.62.85.20:51489
+```
+
+## Conclusion
+
+As we conclude today's deep dive into BitTorrent's tracker interaction using Rust, we have journeyed through the intricate process of establishing communication with a tracker. We've seen firsthand how a `TrackerRequest` is crafted and sent, and how vital the `TrackerResponse` is in guiding our client within the peer-to-peer network.
+
+### Looking Ahead
+
+The next stage is we try to initiate a handshake with peers. This step is critical for actual data exchange in the BitTorrent network, and mastering it will mark a significant milestone in understanding and harnessing the full potential of BitTorrent.
+
+Thank you for reading.
 
 ## Resources
 - [The BitTorrent Protocol Specification](https://www.bittorrent.org/beps/bep_0003.html)
