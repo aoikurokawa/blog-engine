@@ -145,7 +145,6 @@ let mut peer_stream = match res {
 };
 ```
 
-```rust
 
 4. Handshake
 
