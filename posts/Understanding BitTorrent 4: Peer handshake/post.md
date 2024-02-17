@@ -5,9 +5,60 @@ Welcome back to our exploration of the BitTorrent protocol! In [our previous blo
 ## Handshake
 
 First of all, we have to define a handshake struct. 
+`Handshake` struct has 5 attributes according to the [spec](https://www.bittorrent.org/beps/bep_0003.html#peer-protocol).
+
+#### length 
+length of the protocol string (BitTorrent protocol) which is 19 (1 byte)
+
+#### protocol
+the string BitTorrent protocol (19 bytes)
+
+#### reserved
+eight reserved bytes, which are all set to zero (8 bytes)
+
+#### info_hash
+sha1 infohash (20 bytes) (NOT the hexadecimal representation, which is 40 bytes long)
+
+#### peer_id
+peer id (20 bytes) (you can use 00112233445566778899 for this blog)
 
 ```rust
+#[derive(Debug, Clone)]
+pub struct Handshake {
+    pub length: u8,
+    pub protocol: Vec<u8>,
+    pub reserved: Vec<u8>,
+    pub info_hash: Vec<u8>,
+    pub peer_id: Vec<u8>,
+}
+```
 
+To initiate the new Handshake, we are going to create new function. 
+
+```rust
+impl Handshake {
+    pub fn new(info_hash: &[u8; 20]) -> Self {
+        Self {
+            length: 19,
+            protocol: b"BitTorrent protocol".to_vec(),
+            reserved: vec![0; 8],
+            info_hash: info_hash.to_vec(),
+            peer_id: b"00112233445566778899".to_vec(),
+        }
+    }
+
+   pub fn bytes(&self) -> Vec<u8> {
+     let mut bytes = Vec::with_capacity(68);
+
+     bytes.push(self.length);
+     bytes.extend(self.protocol.clone());
+     bytes.extend(self.reserved.clone());
+     bytes.extend(self.info_hash.clone());
+     bytes.extend(self.peer_id.clone());
+
+     bytes
+   }
+}
 ```
 
 
@@ -20,9 +71,23 @@ To make life easier, we are going to do step by step.
 We are going to take 2 arguments `torrent`, `peer`. `torrent` is the path of torrent file and `peer` is address of the peer that we are try to connect and handshake with. 
 
 ```rust
-Commands::Handshake { torrent, peer } => {
-
+#[derive(Subcommand)]
+enum Commands {
+    Handshake {
+        torrent: PathBuf,
+        peer: String,
+    },
 }
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+  let args = Args::parse();
+
+  match args.command {
+    Commands::Handshake { torrent, peer } => {}
+  }
+}
+
 ```
 
 2. Read the torrent file
@@ -71,22 +136,6 @@ let mut peer = tokio::net::TcpStream::connect(peer)
 4. Handshake
 
 ```rust
-let mut handshake = Handshake::new(info_hash, *b"00112233445566778899");
-{
-  let handshake_bytes =
-  &mut handshake as *mut Handshake as *mut [u8; std::mem::size_of::<Handshake>()];
-  // Safety: Handshake is POD with repr(c)
-  let handshake_bytes: &mut [u8; std::mem::size_of::<Handshake>()] =
-  unsafe { &mut *handshake_bytes };
-  peer.write_all(handshake_bytes)
-    .await
-    .context("write handshake")?;
-
-  peer.read_exact(handshake_bytes)
-    .await
-    .context("read handshake")?;
-}
-
 let handshake = Handshake::new(info_hash);
 {
   let mut handshake_bytes = handshake.bytes();
@@ -105,8 +154,17 @@ assert_eq!(handshake.bittorent_protocol, *b"BitTorrent protocol");
 println!("Peer ID: {}", hex::encode(handshake.peer_id));
 ```
 
+When we hit the command like below, we would get the peer id. 
 
+```bash
+./build.sh handshake sample.torrent 178.62.82.89:51470
+```
 
+## Conclusion
+We explored discovering peers and tried to handshake with one of the peer, then we successfully got the peer id.
+In the next blog, we will download the piece of file from the peer. 
+Thank you for reading.
 
-
+## Resources
+- [The BitTorrent Protocol Specification](https://www.bittorrent.org/beps/bep_0003.html#peer-protocol)
 
