@@ -1,7 +1,6 @@
 use std::net::SocketAddr;
 
 use blog::handlers;
-use tokio;
 use tracing_subscriber::fmt::format::FmtSpan;
 use warp::Filter;
 
@@ -35,6 +34,6 @@ async fn main() {
 
     let routes = static_files.or(health_check).or(index).or(post);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
     warp::serve(routes).run(addr).await;
 }
