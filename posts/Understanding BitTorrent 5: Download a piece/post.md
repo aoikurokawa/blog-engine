@@ -11,19 +11,19 @@ To download a piece, our program need to send [peer messages](https://www.bittor
 
 1. Read the torrent file to get the tracker file. 
 
-check out [here](https://www.nxted.co.jp/blog/blog_detail?id=48)
+    check out [here](https://www.nxted.co.jp/blog/blog_detail?id=48)
 
 2. Perform the tracker GET request to get a list of peers
 
-check out [here](https://www.nxted.co.jp/blog/blog_detail?id=49)
+    check out [here](https://www.nxted.co.jp/blog/blog_detail?id=49)
 
 3. Establish TCP connection with a peer, and perform a handshake
 
-check out [here](https://www.nxted.co.jp/blog/blog_detail?id=55)
+    check out [here](https://www.nxted.co.jp/blog/blog_detail?id=55)
 
 4. Exchange multiple peer messages to download the file
 
-later in this blog and next blog...
+    later in this blog and next blog...
 
 
 ## Peer Messages
