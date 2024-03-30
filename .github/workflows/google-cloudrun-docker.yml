@@ -51,7 +51,7 @@ on:
 env:
   PROJECT_ID: blog-418721 # TODO: update Google Cloud project id
   GAR_LOCATION: us-central1 # TODO: update Artifact Registry location
-  SERVICE: run.googleapis.com # TODO: update Cloud Run service name
+  SERVICE: blog # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
 
 jobs:
