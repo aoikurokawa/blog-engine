@@ -86,7 +86,7 @@ fn find_all_frontmatters() -> Result<Vec<Frontmatter>, Error> {
                 }
             }
             Err(e) => {
-                println!("{:}", e); // we're just going to print the error for now
+                eprintln!("{:}", e);
                 return Err(Error::new(
                     std::io::ErrorKind::NotFound,
                     "could not locate frontmatter",
