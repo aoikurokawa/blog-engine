@@ -9,7 +9,7 @@ use super::home_handler::Frontmatter;
 
 pub async fn post(post_name: String) -> Result<warp::http::Response<String>, Rejection> {
     let mut context = tera::Context::new();
-    let mut options = Options::empty(); // used as part of pulldown_cmark for setting flags to enable extra features - we're not going to use any of those, hence the `empty();`
+    let mut options = Options::empty();
     options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
 
     let markdown_input = match extract_markdown(&post_name) {
