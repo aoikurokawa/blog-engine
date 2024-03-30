@@ -28,3 +28,4 @@ $ cargo r
 
 **Deploy**
 - https://github.com/google-github-actions/example-workflows/tree/main
+- https://github.com/google-github-actions/auth
