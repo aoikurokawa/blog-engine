@@ -1,6 +1,6 @@
-use std::{io, net::SocketAddr};
+use std::{io, net::{SocketAddr, TcpListener}};
 
-use blog::{handlers, runtime};
+use blog::{handlers, runtime, Async};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpListener,
@@ -50,7 +50,7 @@ fn main() -> io::Result<()> {
 
 async fn start_heart_beat() -> io::Result<()> {
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    let listener = TcpListener::bind(addr).await?;
+    let listener = Async::bind(addr)?;
 
     loop {
         let (mut stream, _) = listener.accept().await?;

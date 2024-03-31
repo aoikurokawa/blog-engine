@@ -20,7 +20,14 @@ impl Async {
     }
 
     pub fn bind(addr: SocketAddr) -> io::Result<Self> {
-        Async::new(TcpListener::bind(addr)?)
+match TcpListener::bind(addr) {
+            Ok(listner) => 
+        Async::new(listner),
+                Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+
+            }
+            Err(e) => Err(e)
+        }
     }
 
     pub async fn accept(&self) -> io::Result<TcpStream> {
