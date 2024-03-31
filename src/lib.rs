@@ -1,6 +1,6 @@
 use std::{
     io,
-    net::{SocketAddr, TcpListener, TcpStream},
+    net::{SocketAddr, TcpListener, TcpStream}, future::Future,
 };
 
 use runtime::reactor::Reactor;
@@ -40,4 +40,8 @@ match TcpListener::bind(addr) {
             }
         }
     }
+}
+
+impl Future for Async {
+    type Output = ;
 }
