@@ -40,8 +40,7 @@ impl Reactor {
     }
 
     pub fn next_id(&self) -> usize {
-        let next_id = self.next_id + 1;
-        next_id
+        self.next_id + 1
     }
 
     fn event_loop(&self, mut poll: Poll) -> io::Result<()> {

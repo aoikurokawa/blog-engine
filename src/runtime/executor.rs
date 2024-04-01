@@ -88,16 +88,6 @@ pub struct MyWaker {
     ready_queue: Arc<Mutex<Vec<usize>>>,
 }
 
-impl MyWaker {
-    pub fn wake(&self) {
-        self.ready_queue
-            .lock()
-            .map(|mut q| q.push(self.id))
-            .unwrap();
-        self.thread.unpark();
-    }
-}
-
 impl Wake for MyWaker {
     fn wake(self: Arc<Self>) {
         self.ready_queue
