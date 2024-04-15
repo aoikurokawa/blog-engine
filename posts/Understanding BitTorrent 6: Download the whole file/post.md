@@ -359,4 +359,3 @@ Thank you for reading whole **Understanding BitTorrent** series. I hope you enjo
 - https://without.boats/
 - [Async: What is blocking?](https://ryhl.io/blog/async-what-is-blocking/)
 - [Green Threads in Rust](https://stanford-cs242.github.io/f17/assets/projects/2017/kedero.pdf)
-- []()
