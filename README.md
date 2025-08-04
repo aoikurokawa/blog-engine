@@ -1,9 +1,5 @@
 # BLOG
 
-## Why?
-
-My personal blog
-
 ## Getting Started
 
 ### 1. Run the app
