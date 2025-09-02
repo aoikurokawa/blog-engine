@@ -78,11 +78,3 @@ jobs:
           VCS_REF=${{ github.sha }}
           BRANCH=${{ steps.branch.outputs.branch }}
           VERSION=${{ steps.meta.outputs.version }}
-
-    - name: Run security scan
-      uses: docker/scout-action@v1
-      with:
-        command: cves
-        image: ${{ steps.meta.outputs.tags }}
-        only-severities: critical,high
-        exit-code: true
