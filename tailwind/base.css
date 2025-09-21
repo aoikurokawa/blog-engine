@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Force include dark mode classes */
+@layer utilities {
+  .dark\:bg-gray-900 {
+    @apply dark:bg-gray-900;
+  }
+  .dark\:bg-gray-800 {
+    @apply dark:bg-gray-800;
+  }
+  .dark\:text-white {
+    @apply dark:text-white;
+  }
+  .dark\:text-gray-100 {
+    @apply dark:text-gray-100;
+  }
+}
