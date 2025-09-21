@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,24 +8,118 @@
     <title>{% block title %}{% endblock title %}</title>
     {% endblock head %}
     <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+    <style>
+        /* Smooth transitions for dark mode */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Dark mode toggle button styles */
+        .toggle-btn {
+            width: 50px;
+            height: 24px;
+            background-color: #d1d5db;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background-color: #3b82f6;
+        }
+
+        .toggle-slider {
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-btn.active .toggle-slider {
+            transform: translateX(26px);
+        }
+    </style>
 </head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col justify-between min-h-screen font-sans leading-normal tracking-normal">
+    <!-- Dark mode toggle button -->
+    <div class="fixed top-4 right-4 z-50">
+        <div class="flex items-center space-x-2">
+            <span class="text-sm">🌞</span>
+            <div class="toggle-btn" id="darkModeToggle">
+                <div class="toggle-slider"></div>
+            </div>
+            <span class="text-sm">🌙</span>
+        </div>
+    </div>
 
-<body class="flex flex-col justify-between min-h-screen font-sans leading-normal tracking-normal">
     <div class="h-16">{% block header %}{% endblock header %}</div>
-
     <main class="container flex-1 w-full md:max-w-3xl mx-auto overflow-x-hidden">
         {% block content %}{% endblock content %}
     </main>
     {% block footer %}
-    <div class="flex w-full h-20 justify-center items-center">
-        &copy; 2025 by <a class="pl-2" href="https://awesomeblog.com/">Blog</a>.
+    <div class="flex w-full h-20 justify-center items-center border-t border-gray-200 dark:border-gray-700">
+        &copy; 2025 by <a class="pl-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" href="https://awesomeblog.com/">Blog</a>.
     </div>
     {% endblock footer %}
+
+    <script src="/static/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    
+    <!-- Dark mode script -->
+    <script>
+        // Dark mode functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to system preference
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+        }
+
+        // Set dark mode
+        function setDarkMode(isDark) {
+            if (isDark) {
+                html.classList.add('dark');
+                darkModeToggle.classList.add('active');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                darkModeToggle.classList.remove('active');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDark = html.classList.contains('dark');
+            setDarkMode(!isDark);
+        }
+
+        // Event listeners
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                setDarkMode(e.matches);
+            }
+        });
+
+        // Initialize theme on page load
+        initTheme();
+    </script>
 </body>
-
-<script src="/static/js/highlight.min.js"></script>
-<script>hljs.highlightAll();</script>
-</script>
-
 </html>
-
