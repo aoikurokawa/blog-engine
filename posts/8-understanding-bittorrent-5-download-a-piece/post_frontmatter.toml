@@ -1,8 +1,8 @@
-title = 'Understanding BitTorrent 4: Peer Handshake'
-file_name = 'understanding-bittorrent-4-peer-handshake'
+title = 'Understanding BitTorrent 5: Download A Piece'
+file_name = '8-understanding-bittorrent-5-download-a-piece'
 description = 'BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols'
 tags = ['bittorrent', 'Rust']
 posted = '11/30/2023'
 estimated_reading_time = 5
 author = 'aoi' 
-order = 2
+order = 8

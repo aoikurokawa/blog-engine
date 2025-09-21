@@ -65,10 +65,7 @@ fn find_all_frontmatters() -> Result<Vec<Frontmatter>, Error> {
         Ok(t) => t,
         Err(e) => {
             println!("{:}", e);
-            return Err(Error::new(
-                std::io::ErrorKind::Other,
-                "could not build toml file type matcher",
-            ));
+            return Err(Error::other("could not build toml file type matcher"));
         }
     };
 

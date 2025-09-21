@@ -1,4 +1,4 @@
-name: Build Public Container Images
+name: Build Container Images
 
 on:
   workflow_dispatch:
