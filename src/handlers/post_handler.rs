@@ -93,10 +93,7 @@ fn extract_frontmatter(post_name: &str) -> Result<Frontmatter, Error> {
         Ok(fm) => fm,
         Err(e) => {
             println!("{:?}", e);
-            return Err(Error::new(
-                std::io::ErrorKind::Other,
-                "could not find post frontmatter",
-            ));
+            return Err(Error::other("could not find post frontmatter"));
         }
     };
 
