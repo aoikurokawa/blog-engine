@@ -1,0 +1,8 @@
+title = 'Elliptic Curve Cryptography in Rust'
+file_name = '1-elliptic-curve-cryptography-in-rust'
+description = 'Elliptic Curve Cryptography in Rust'
+tags = ['rust']
+posted = '27/08/2023'
+estimated_reading_time = 10
+author = 'aoi' 
+order = 1

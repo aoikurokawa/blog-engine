@@ -1,8 +1,8 @@
-title = 'Understanding BitTorrent 5: Download A Piece'
-file_name = 'understanding-bittorrent-5-download-a-piece'
+title = 'Understanding BitTorrent 6: Download the whole file'
+file_name = '10-understanding-bittorrent-6-download-the-whole-file'
 description = 'BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols'
 tags = ['bittorrent', 'Rust']
-posted = '11/30/2023'
+posted = '04/16/2024'
 estimated_reading_time = 5
 author = 'aoi' 
-order = 2
+order = 10

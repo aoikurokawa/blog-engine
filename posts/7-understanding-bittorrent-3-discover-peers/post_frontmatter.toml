@@ -1,8 +1,8 @@
 title = 'Understanding BitTorrent 3: Discover Peers'
-file_name = 'understanding-bittorrent-3-discover-peers'
+file_name = '7-understanding-bittorrent-3-discover-peers'
 description = 'BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols'
 tags = ['bittorrent', 'Rust']
 posted = '11/30/2023'
 estimated_reading_time = 5
 author = 'aoi' 
-order = 2
+order = 7

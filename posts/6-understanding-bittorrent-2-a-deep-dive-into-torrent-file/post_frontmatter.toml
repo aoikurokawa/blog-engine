@@ -1,8 +1,8 @@
-title = 'Understanding BitTorrent 4: Peer Handshake'
-file_name = 'understanding-bittorrent-4-peer-handshake'
+title = 'Understanding BitTorrent 2: A Deep Dive into Torrent File'
+file_name = '6-understanding-bittorrent-2-a-deep-dive-into-torrent-file'
 description = 'BitTorrent is one of the pioneering and most popular peer-to-peer (P2P) file sharing protocols'
 tags = ['bittorrent', 'Rust']
 posted = '11/30/2023'
 estimated_reading_time = 5
 author = 'aoi' 
-order = 2
+order = 6

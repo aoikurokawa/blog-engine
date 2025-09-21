@@ -1,8 +1,8 @@
 title = 'Implementing Elliptic Curves in Rust: A Comprehensive Guide'
-file_name = 'implementing-elliptic-curve-in-rust'
+file_name = '2-implementing-elliptic-curve-in-rust'
 description = 'Implementing Elliptic Curves in Rust: A Comprehensive Guide'
-tags = ['']
+tags = ['rust']
 posted = '27/08/2023'
 estimated_reading_time = 10
 author = 'aoi' 
-order = 1
+order = 2
