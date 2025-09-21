@@ -4,7 +4,7 @@ use std::{
     task::{Context, Waker},
 };
 
-use mio::{net::TcpStream, Events, Interest, Poll, Registry, Token};
+use mio::{Events, Interest, Poll, Registry, Token, net::TcpStream};
 
 pub struct Reactor {
     wakers: HashMap<usize, Waker>,

@@ -1,6 +1,6 @@
 use std::{fs, io::Error};
 
-use pulldown_cmark::{html, Options, Parser};
+use pulldown_cmark::{Options, Parser, html};
 use warp::Rejection;
 
 use crate::startup::TEMPLATES;
